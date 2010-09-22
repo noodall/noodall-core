@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rake'
+require "rspec/core/rake_task"
 
 begin
   require 'jeweler'
@@ -8,9 +9,16 @@ begin
     gem.summary = %Q{TODO: one-line summary of your gem}
     gem.description = %Q{TODO: longer description of your gem}
     gem.email = "steve@wearebeef.co.uk"
-    gem.homepage = "http://github.com/stengland/noodall-core"
+    gem.homepage = "http://github.com/beef/noodall-core"
     gem.authors = ["Steve England"]
-    gem.add_development_dependency "rspec", ">= 1.2.9"
+    gem.add_dependency('mongo_mapper', '0.8.4')
+    gem.add_dependency('ramdiv-mongo_mapper_acts_as_tree', '0.1.1')
+    gem.add_dependency('canable', '0.1.1')
+    gem.add_dependency('ruby-stemmer')
+    gem.add_development_dependency "rspec", ">= 2.0.0.beta.22"
+    gem.add_development_dependency "database_cleaner", ">= 0.5.2"
+    gem.add_development_dependency "factory_girl", ">= 1.3.2"
+    gem.add_development_dependency "faker", ">= 0.3.1"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
@@ -18,15 +26,9 @@ rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
-end
+RSpec::Core::RakeTask.new(:spec)
 
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.pattern = 'spec/**/*_spec.rb'
+RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 

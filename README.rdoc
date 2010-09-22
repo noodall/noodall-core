@@ -1,6 +1,6 @@
-= noodall-core
+= noodall (Node-All) core
 
-Description goes here.
+Noodal is a CMS using Mongo(mapper/id). It is nice.
 
 == Note on Patches/Pull Requests
  
