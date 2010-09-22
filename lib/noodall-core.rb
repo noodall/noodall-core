@@ -12,3 +12,16 @@ module Noodall
   autoload :Component,                'noodall/component'
   autoload :Node,                     'noodall/node'
 end
+
+
+# Ruby 1.8 Compatibilty
+class Object
+  unless defined?(define_singleton_method)
+    puts "Redefining 'define_singleton_method' to work with Ruby1.8"
+    def define_singleton_method(sym, &block)
+      singleton_class.instance_eval do
+        define_method sym, block
+      end
+    end
+  end
+end

@@ -4,6 +4,8 @@ require 'database_cleaner'
 require 'factory_girl'
 require 'faker'
 
+$KCODE = 'UTF8' # For parameterize in Ruby1.8
+
 MongoMapper.connection = Mongo::Connection.new
 MongoMapper.database = 'noodal-core-test'
 
