@@ -162,9 +162,8 @@ module Noodall
   
   private
 
-    # If rails style time zones are unavaiable fallback to standard now 
     def current_time
-      Time.zone ? Time.zone.now : Time.now 
+      self.class.current_time
     end
   
     before_validation :set_permalink
@@ -339,6 +338,11 @@ module Noodall
           classes << c
         end
         classes
+      end
+    
+      # If rails style time zones are unavaiable fallback to standard now 
+      def current_time
+        Time.zone ? Time.zone.now : Time.now 
       end
     end
     extend ClassMethods

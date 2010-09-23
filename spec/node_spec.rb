@@ -35,6 +35,11 @@ describe Noodall::Node do
     node.class.should == Page
   end
 
+  it "should be found by permalink" do
+    page = Factory(:page, :title => "My Page", :publish => true)
+    Noodall::Node.find_by_permalink('my-page').should == page
+  end
+
 
   describe "within a tree" do
     before(:each) do

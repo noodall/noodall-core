@@ -6,8 +6,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "noodall-core"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Core data objects for Noodall}
+    gem.description = %Q{Core data objects for Noodall}
     gem.email = "steve@wearebeef.co.uk"
     gem.homepage = "http://github.com/beef/noodall-core"
     gem.authors = ["Steve England"]
