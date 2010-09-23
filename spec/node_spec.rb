@@ -293,6 +293,7 @@ describe Noodall::Node do
     results = Page.search("Searchable", :per_page => 2)
 
     results.should have(2).things
+    results.total_pages.should == 2
 
     results.first.should == top_hit
 

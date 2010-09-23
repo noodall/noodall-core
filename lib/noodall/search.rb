@@ -59,7 +59,9 @@ module Noodall
         # clean up tmp collection
         search_result.drop 
         #return results mappped to objects
-        results.map { |hash| load(hash['value']) }
+        results.tap do |docs|
+          docs.map! { |hash| load(hash['value']) }
+        end
       end
   
       def search_map(words)
