@@ -185,7 +185,7 @@ module Noodall
   
       # TODO: spec this
   
-      slot_types = ['main','small','wide']
+      slot_types = self.class.possible_slots.map(&:to_s)
       # collect all of the slot attributes
       #    (so we don't have to loop through the whole object each time)
       slots = self.attributes.select{|k,v| k =~ /^(#{slot_types.join('|')})_slot_\d+$/ }
