@@ -5,6 +5,8 @@ describe Noodall::Component do
   it "should allow you to define the slots that are available" do
     Noodall::Node.slots :wide, :small, :main
 
+    Noodall::Component.possible_slots.should == [:wide, :small, :main]
+
     class Promo < Noodall::Component
       allowed_positions :small, :wide, :main, :egg, :nog
     end

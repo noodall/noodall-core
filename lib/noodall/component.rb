@@ -8,6 +8,10 @@ module Noodall
     embedded_in :node
   
     module ClassMethods
+      def possible_slots
+        Noodall::Node.possible_slots
+      end
+
       def allowed_positions(*args)
         @allowed_positions = args.reject{|a| !Node.possible_slots.include?(a) }.uniq
       end
