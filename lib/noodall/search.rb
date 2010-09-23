@@ -35,35 +35,38 @@ module Noodall
         ))
         criteria = plucky_query.criteria.to_hash
         options = plucky_query.options.to_hash
-  
-        # Add the quert as a regular expression
-        q = query.to_s.gsub(/[^a-z0-9 _\']+/i,' ').downcase.split.map do |k|
-          Regexp.escape(k)
-        end.join("|")
-        criteria.merge!( :_keywords => /(#{q})/i )
+
+        # Extract words from the query and clean up
+        words = query.downcase.split(/\W/) - STOPWORDS
+        words.reject!{|w| w.length < 3}
+        criteria.merge!( :_keywords => { :$all => words } )
   
         # The Search result
-        search_result = collection.map_reduce(search_map(q), search_reduce, {:query => criteria, :finalize => search_finalize})
+        search_result = collection.map_reduce(search_map(words), search_reduce, {:query => criteria, :finalize => search_finalize})
+        
         # Add value to sort options because model is stored in the value key
         options[:sort].map! do |s,v|
           ["value.#{s}",v]
         end
-        # If per page is set do pagination
+
+        search_query = Plucky::Query.new(search_result, options)
+
         if per_page
-          total_entries = search_result.find({}, options.dup ).count # Need to dup as the find method affects the options
-          pagination = MongoMapper::Plugins::Pagination::Proxy.new(total_entries, page, per_page)
-          options.merge!(:limit => pagination.limit, :skip => pagination.skip)
-          pagination.subject = search_result.find({}, options ).to_a.map { |hash| load(hash['value']) }
-          search_result.drop # clean up tmp collection
-          pagination
+          results = search_query.paginate(:per_page => per_page, :page => page)
         else
-          results = search_result.find({}, options ).to_a.map { |hash| load(hash['value']) }
-          search_result.drop # clean up tmp collection
-          results
+          results = search_query.all
         end
+        # clean up tmp collection
+        search_result.drop 
+        #return results mappped to objects
+        results.map { |hash| load(hash['value']) }
       end
   
-      def search_map(q)
+      def search_map(words)
+        #convert words into Regex OR
+        q = words.map do |k|
+          Regexp.escape(k)
+        end.join("|")
         "function(){" +
           "this.relevance = this._keywords.filter(" +
           "function(z){" +

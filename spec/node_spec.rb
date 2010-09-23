@@ -277,6 +277,15 @@ describe Noodall::Node do
 
     results.first.should == top_hit
 
+    results = Page.search("Searchable", :per_page => 2)
+
+    results.should have(2).things
+
+    results.first.should == top_hit
+
+    results = Page.search("supercalifragilistic")
+
+    results.should have(0).things
   end
 
   it "should return related" do
