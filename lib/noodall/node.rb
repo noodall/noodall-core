@@ -274,7 +274,7 @@ module Noodall
       end
 
       def slots_count
-        @@slots.inject(0) { |total, slot| total + send("@#{slot}_slots_count") }
+        @@slots.inject(0) { |total, slot| total + send("#{slot}_slots_count").to_i }
       end
 
       def possible_slots

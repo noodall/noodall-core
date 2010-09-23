@@ -40,6 +40,14 @@ describe Noodall::Node do
     Noodall::Node.find_by_permalink('my-page').should == page
   end
 
+  it "should allow you to set the number of slots" do
+    class NicePage < Noodall::Node
+      wide_slots 3
+      small_slots 5
+    end
+
+    NicePage.slots_count.should == 8
+  end
 
   describe "within a tree" do
     before(:each) do
