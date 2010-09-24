@@ -254,7 +254,7 @@ module Noodall
       # For each name new methods will be created;
       #   
       #   <name>_slots(count)
-      #   This allow you to set the number of slots avaable in a template
+      #   This allow you to set the number of slots available in a template
       #   <name>_slots_count(count)
       #   Reads back the count you set 
       def slots(*args)
