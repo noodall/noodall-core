@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Steve England"]
-  s.date = %q{2010-09-24}
+  s.date = %q{2010-09-29}
   s.description = %q{Core data objects for Noodall}
   s.email = %q{steve@wearebeef.co.uk}
   s.extra_rdoc_files = [
@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     "Gemfile",
+     "Gemfile.lock",
      "LICENSE",
      "README.rdoc",
      "Rakefile",
@@ -60,29 +62,17 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["= 0.1.1"])
       s.add_runtime_dependency(%q<canable>, ["= 0.1.1"])
       s.add_runtime_dependency(%q<ruby-stemmer>, [">= 0"])
-      s.add_development_dependency(%q<rspec>, [">= 2.0.0.beta.22"])
-      s.add_development_dependency(%q<database_cleaner>, [">= 0.5.2"])
-      s.add_development_dependency(%q<factory_girl>, [">= 1.3.2"])
-      s.add_development_dependency(%q<faker>, [">= 0.3.1"])
     else
       s.add_dependency(%q<mongo_mapper>, ["= 0.8.4"])
       s.add_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["= 0.1.1"])
       s.add_dependency(%q<canable>, ["= 0.1.1"])
       s.add_dependency(%q<ruby-stemmer>, [">= 0"])
-      s.add_dependency(%q<rspec>, [">= 2.0.0.beta.22"])
-      s.add_dependency(%q<database_cleaner>, [">= 0.5.2"])
-      s.add_dependency(%q<factory_girl>, [">= 1.3.2"])
-      s.add_dependency(%q<faker>, [">= 0.3.1"])
     end
   else
     s.add_dependency(%q<mongo_mapper>, ["= 0.8.4"])
     s.add_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["= 0.1.1"])
     s.add_dependency(%q<canable>, ["= 0.1.1"])
     s.add_dependency(%q<ruby-stemmer>, [">= 0"])
-    s.add_dependency(%q<rspec>, [">= 2.0.0.beta.22"])
-    s.add_dependency(%q<database_cleaner>, [">= 0.5.2"])
-    s.add_dependency(%q<factory_girl>, [">= 1.3.2"])
-    s.add_dependency(%q<faker>, [">= 0.3.1"])
   end
 end
 
