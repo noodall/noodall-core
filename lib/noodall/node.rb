@@ -296,7 +296,7 @@ module Noodall
         return @template_classes if @template_classes
         classes = []
         ObjectSpace.each_object(Class) do |c|
-          next unless c.ancestors.include?(Node) and (c != Node) and c.root_template?
+          next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node) and c.root_template?
           classes << c
         end
         @template_classes = classes
@@ -335,7 +335,7 @@ module Noodall
       def parent_classes
         classes = []
         ObjectSpace.each_object(Class) do |c|
-          next unless c.ancestors.include?(Node) and (c != Node) and c.template_classes.include?(self)
+          next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node) and c.template_classes.include?(self)
           classes << c
         end
         classes
