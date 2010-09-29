@@ -24,7 +24,4 @@ module Noodall
       end
     end
   end
-  
-  # Initialise global update timestamp
-  GlobalUpdateTime::Stamp.update!
 end
