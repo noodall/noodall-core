@@ -12,6 +12,7 @@ MongoMapper.database = 'noodal-core-test'
 DatabaseCleaner.strategy = :truncation
 DatabaseCleaner.clean_with(:truncation)
  
+
 Noodall::Node.slots :main, :wide, :small
 
 require 'factories/node'

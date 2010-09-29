@@ -9,7 +9,7 @@ module Noodall
   
     module ClassMethods
       def possible_slots
-        Noodall::Node.possible_slots
+        Node.possible_slots
       end
 
       def allowed_positions(*args)

@@ -5,6 +5,7 @@ module Noodall
     include Canable::Ables
   
     plugin MultiParameterAttributes
+    plugin Indexer
     plugin Search
     plugin Tagging
     plugin GlobalUpdateTime
