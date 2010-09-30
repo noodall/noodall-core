@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "lib/noodall-core.rb",
      "lib/noodall/component.rb",
      "lib/noodall/global_update_time.rb",
+     "lib/noodall/indexer.rb",
      "lib/noodall/multi_parameter_attributes.rb",
      "lib/noodall/node.rb",
      "lib/noodall/permalink.rb",
