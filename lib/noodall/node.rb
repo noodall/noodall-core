@@ -113,15 +113,11 @@ module Noodall
   
     def slots
       slots = []
-      self.class.main_slots_count.times do |i|
-        slots << self.send("main_slot_#{i}")
-      end if self.class.main_slots_count
-      self.class.small_slots_count.times do |i|
-        slots << self.send("small_slot_#{i}")
-      end if self.class.small_slots_count
-      self.class.wide_slots_count.times do |i|
-        slots << self.send("wide_slot_#{i}")
-      end if self.class.wide_slots_count
+      for slot_type in self.class.possible_slots.map(&:to_s)
+        self.class.main_slots_count.to_i.times do |i|
+          slots << self.send("#{slot_type}_slot_#{i}")
+        end
+      end
       slots.compact
     end
   
