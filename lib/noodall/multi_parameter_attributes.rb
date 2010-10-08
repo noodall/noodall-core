@@ -38,7 +38,7 @@ module Noodall
             klass = key.type
   
             value = if Time == klass
-              Time.zone.local(*values)
+              Time.zone.local(*values.map(&:to_i))
             elsif Date == klass
               begin
                 values = values_with_empty_parameters.collect do |v| v.nil? ? 1 : v end
