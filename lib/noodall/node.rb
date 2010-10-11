@@ -114,7 +114,7 @@ module Noodall
     def slots
       slots = []
       for slot_type in self.class.possible_slots.map(&:to_s)
-        self.class.main_slots_count.to_i.times do |i|
+        self.class.send("#{slot_type}_slots_count").to_i.times do |i|
           slots << self.send("#{slot_type}_slot_#{i}")
         end
       end
