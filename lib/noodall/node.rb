@@ -148,17 +148,17 @@ module Noodall
       parent.nil? or parent.updatable_by?(user)
     end
 
-    # tree method that allow oprions to be passed
-    def siblings(options = {})
-      self.class.all(options.merge(:_id => {"$ne" => self._id}, parent_id_field => self[parent_id_field], :order => tree_order))
+    def siblings
+      self.class.where(:_id => {:$ne => self._id}, parent_id_field => self[parent_id_field]).order(tree_order)
     end
 
-    def self_and_siblings(options = {})
-      self.class.all(options.merge(parent_id_field => self[parent_id_field], :order => tree_order))
+    def self_and_siblings
+      self.class.where(parent_id_field => self[parent_id_field]).order(tree_order)
+
     end
 
-    def children(options = {})
-      self.class.all(options.merge(parent_id_field => self._id, :order => tree_order))
+    def children
+      self.class.where(parent_id_field => self._id).order(tree_order)
     end
 
   private
@@ -288,7 +288,7 @@ module Noodall
       end
 
       def roots(options = {})
-        self.all(options.merge(parent_id_field => nil, :order => tree_order))
+        self.where(parent_id_field => self._id).order(tree_order)
       end
 
       def find_by_permalink(permalink)
