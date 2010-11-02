@@ -35,7 +35,11 @@ module Noodall
 
     searchable_keys :title, :description, :keywords, :body
 
-    validates_true_for :template, :message => "cannot be changed as sub content is not allowed in this template", :logic => lambda { children.reject{|c| self._type.constantize.template_classes.include?(c.class)}.empty? }
+    validates_true_for :template,
+      :message => "cannot be changed as sub content is not allowed in this template",
+      :logic => lambda { children.reject{|c| self._type.constantize.template_classes.include?(c.class)}.empty? }
+
+    scope :published, lambda { where(:published_at => { :$lte => current_time }, :published_to => { :$gte => current_time }) }
 
     def published_children
       self.children.select{|c| c.published? }

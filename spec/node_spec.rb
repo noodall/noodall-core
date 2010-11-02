@@ -142,7 +142,7 @@ describe Noodall::Node do
     end
 
     it "should be findable by publish dates" do
-      nodes = Noodall::Node.all(:published_at => { :$lte => Time.now }, :published_to => { :$gte => Time.now })
+      nodes = Noodall::Node.published
       nodes.should have(1).things
 
       nodes = Noodall::Node.all(:published_at => { :$lte => 4.days.ago }, :published_to => { :$gte => 4.days.ago })
