@@ -55,7 +55,7 @@ describe Noodall::Node do
 
       @child = Page.create!(:title => "Ickle Kid", :parent => @root)
 
-      @grandchild = Page.create!(:title => "Very Ickle Kid", :parent => @child) 
+      @grandchild = Page.create!(:title => "Very Ickle Kid", :parent => @child)
     end
 
     it "should create permlink based on tree" do
@@ -63,11 +63,11 @@ describe Noodall::Node do
       @grandchild.reload
       @grandchild.permalink.to_s.should == "root/ickle-kid/very-ickle-kid"
     end
-    
+
     it "should be under the correct path once moved" do
       grand_child_2 = Page.create!(:title => "Ickle Kid", :parent => @child)
       root_2 = Page.create!(:title => "Root 2")
-      
+
       grand_child_2.parent = root_2
       grand_child_2.save!
 
@@ -82,7 +82,7 @@ describe Noodall::Node do
       @child.save(:validate => false)
 
       grand_child_2.reload
-      
+
       grand_child_2.path.should_not include(@root.id)
       grand_child_2.path.should include(root_2.id)
     end
@@ -325,6 +325,17 @@ describe Noodall::Node do
 
     Page.parent_classes.should include(LandingPage)
     Page.parent_classes.should_not include(ArticlesList)
+  end
+
+  it "should fall back to title for link name if it is blank" do
+    page = Factory(:page, :title => "My Long Title that is long")
+
+    page.name.should == "My Long Title that is long"
+
+    page.name = "Shorty"
+    page.save
+
+    page.name.should == "Shorty"
   end
 
 end
