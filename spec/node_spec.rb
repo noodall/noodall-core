@@ -58,6 +58,21 @@ describe Noodall::Node do
       @grandchild = Page.create!(:title => "Very Ickle Kid", :parent => @child)
     end
 
+    it "should list the roots" do
+      Page.create!(:title => "Root 2")
+
+      Noodall::Node.roots.should have(2).things
+    end
+
+    it "should know about it's siblings" do
+      3.times do |i|
+        Page.create!(:title => "Sibbling #{i}", :parent => @root)
+      end
+
+      @child.siblings.should have(3).things
+      @child.self_and_siblings.should have(4).things
+    end
+
     it "should create permlink based on tree" do
       @grandchild.permalink.to_s.should == "root/ickle-kid/very-ickle-kid"
       @grandchild.reload

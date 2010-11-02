@@ -288,7 +288,7 @@ module Noodall
       end
 
       def roots(options = {})
-        self.where(parent_id_field => self._id).order(tree_order)
+        self.where(parent_id_field => nil).order(tree_order)
       end
 
       def find_by_permalink(permalink)
