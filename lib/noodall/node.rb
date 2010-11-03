@@ -31,7 +31,7 @@ module Noodall
 
     attr_accessor :publish, :hide #for publishing
 
-    acts_as_tree :order => "position"
+    acts_as_tree :order => "position", :search_class => Noodall::Node
 
     searchable_keys :title, :description, :keywords, :body
 
