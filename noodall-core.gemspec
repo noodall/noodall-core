@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{noodall-core}
-  s.version = "0.2.1"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Steve England"]
-  s.date = %q{2010-11-02}
+  s.date = %q{2010-11-03}
   s.description = %q{Core data objects for Noodall}
   s.email = %q{steve@wearebeef.co.uk}
   s.extra_rdoc_files = [
@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
      "lib/noodall/component.rb",
      "lib/noodall/global_update_time.rb",
      "lib/noodall/indexer.rb",
-     "lib/noodall/multi_parameter_attributes.rb",
      "lib/noodall/node.rb",
      "lib/noodall/permalink.rb",
      "lib/noodall/search.rb",
@@ -61,17 +60,20 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<mongo_mapper>, ["~> 0.8.6"])
       s.add_runtime_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["~> 0.1.1"])
+      s.add_runtime_dependency(%q<mm-multi-parameter-attributes>, ["~> 0.1.1"])
       s.add_runtime_dependency(%q<canable>, ["= 0.1.1"])
       s.add_runtime_dependency(%q<ruby-stemmer>, [">= 0"])
     else
       s.add_dependency(%q<mongo_mapper>, ["~> 0.8.6"])
       s.add_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["~> 0.1.1"])
+      s.add_dependency(%q<mm-multi-parameter-attributes>, ["~> 0.1.1"])
       s.add_dependency(%q<canable>, ["= 0.1.1"])
       s.add_dependency(%q<ruby-stemmer>, [">= 0"])
     end
   else
     s.add_dependency(%q<mongo_mapper>, ["~> 0.8.6"])
     s.add_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["~> 0.1.1"])
+    s.add_dependency(%q<mm-multi-parameter-attributes>, ["~> 0.1.1"])
     s.add_dependency(%q<canable>, ["= 0.1.1"])
     s.add_dependency(%q<ruby-stemmer>, [">= 0"])
   end
