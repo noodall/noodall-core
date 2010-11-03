@@ -4,7 +4,7 @@ module Noodall
     include MongoMapper::Acts::Tree
     include Canable::Ables
 
-    plugin MultiParameterAttributes
+    plugin MongoMapper::Plugins::MultiParameterAttributes
     plugin Indexer
     plugin Search
     plugin Tagging
@@ -330,10 +330,6 @@ module Noodall
 
       def root_template?
         @root_template
-      end
-
-      def single_collection_inherited?
-        false
       end
 
       # Returns a list of classes that can have this model as a child

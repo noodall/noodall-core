@@ -33,6 +33,15 @@ describe Noodall::Node do
     node = Noodall::Node.find(page.id)
 
     node.class.should == Page
+
+    class LandingPage < Noodall::Node
+      root_template!
+    end
+
+    LandingPage.create!(@valid_attributes)
+
+    Page.last.class.should == Page
+    LandingPage.last.class.should == LandingPage
   end
 
   it "should be found by permalink" do
