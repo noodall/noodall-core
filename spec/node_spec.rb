@@ -60,7 +60,11 @@ describe Noodall::Node do
 
   describe "within a tree" do
     before(:each) do
-      @root = Page.create!(:title => "Root")
+      class LandingPage < Noodall::Node
+        root_template!
+      end
+
+      @root = LandingPage.create!(:title => "Root")
 
       @child = Page.create!(:title => "Ickle Kid", :parent => @root)
 

@@ -76,29 +76,29 @@ module Noodall
     end
 
     def last?
-      position == self.class.count(:_id => {"$ne" => self._id}, parent_id_field => self[parent_id_field])
+      position == search_class.count(:_id => {"$ne" => self._id}, parent_id_field => self[parent_id_field])
     end
     def move_lower
-      sibling = self.class.first(:position => {"$gt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position ASC')
+      sibling = search_class.first(:position => {"$gt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position ASC')
 
       tmp = sibling.position
       sibling.position = self.position
       self.position = tmp
 
-      self.class.collection.update({:_id => self._id}, self.to_mongo)
-      self.class.collection.update({:_id => sibling._id}, sibling.to_mongo)
+      search_class.collection.update({:_id => self._id}, self.to_mongo)
+      search_class.collection.update({:_id => sibling._id}, sibling.to_mongo)
 
       global_updated!
     end
     def move_higher
-      sibling = self.class.first(:position => {"$lt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position DESC')
+      sibling = search_class.first(:position => {"$lt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position DESC')
 
       tmp = sibling.position
       sibling.position = self.position
       self.position = tmp
 
-      self.class.collection.update({:_id => self._id}, self.to_mongo)
-      self.class.collection.update({:_id => sibling._id}, sibling.to_mongo)
+      search_class.collection.update({:_id => self._id}, self.to_mongo)
+      search_class.collection.update({:_id => sibling._id}, sibling.to_mongo)
 
       global_updated!
     end
@@ -149,16 +149,16 @@ module Noodall
     end
 
     def siblings
-      self.class.where(:_id => {:$ne => self._id}, parent_id_field => self[parent_id_field]).order(tree_order)
+      search_class.where(:_id => {:$ne => self._id}, parent_id_field => self[parent_id_field]).order(tree_order)
     end
 
     def self_and_siblings
-      self.class.where(parent_id_field => self[parent_id_field]).order(tree_order)
+      search_class.where(parent_id_field => self[parent_id_field]).order(tree_order)
 
     end
 
     def children
-      self.class.where(parent_id_field => self._id).order(tree_order)
+      search_class.where(parent_id_field => self._id).order(tree_order)
     end
 
   private
@@ -225,11 +225,11 @@ module Noodall
     after_save :order_siblings
     def order_siblings
       if position_changed?
-        self.class.collection.update({:_id => {"$ne" => self._id}, :position => {"$gte" => self.position}, parent_id_field => self[parent_id_field]}, { "$inc" => { :position => 1 }}, { :multi => true })
+        search_class.collection.update({:_id => {"$ne" => self._id}, :position => {"$gte" => self.position}, parent_id_field => self[parent_id_field]}, { "$inc" => { :position => 1 }}, { :multi => true })
         self_and_siblings.each_with_index do |sibling, index|
           unless sibling.position == index
             sibling.position = index
-            self.class.collection.save(sibling.to_mongo, :safe => true)
+            search_class.collection.save(sibling.to_mongo, :safe => true)
           end
         end
       end
