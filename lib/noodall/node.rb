@@ -173,8 +173,8 @@ module Noodall
         # inherit the parents permalink and append the current node's .name or .title attribute
         # this code takes name over title for the current node's slug
         # this way enables children to inherit the parent's custom (user defined) permalink also
-        permalink_args = self.parent.permalink unless self.parent.nil?
-        self_slug = (self.name.blank? ? self.title : self.name).parameterize
+        permalink_args = self.parent.nil? ? [] : self.parent.permalink
+        self_slug = (self.name.blank? ? self.title : self.name).to_s.parameterize
         permalink_args << self_slug unless self_slug.blank?
         self.permalink = Permalink.new(*permalink_args)
       end
