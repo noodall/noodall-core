@@ -33,8 +33,6 @@ module Noodall
 
     acts_as_tree :order => "position", :search_class => Noodall::Node
 
-    searchable_keys :title, :description, :keywords, :body
-
     validates_true_for :template,
       :message => "cannot be changed as sub content is not allowed in this template",
       :logic => lambda { children.reject{|c| self._type.constantize.template_classes.include?(c.class)}.empty? }

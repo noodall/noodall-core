@@ -1,6 +1,7 @@
 # Dummy node class for the tests
 class Page < Noodall::Node
   #sub_templates PageA, PageB, ArticlesList, LandingPage, EventsList
+  searchable_keys :title, :description, :keywords, :body
   root_template!
 
   main_slots 1
