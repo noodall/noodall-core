@@ -344,15 +344,27 @@ describe Noodall::Node do
   end
 
   it "should know who can be a parent" do
-    class LandindPage < Noodall::Node
+    class LandingPage < Noodall::Node
       sub_templates Page
     end
     class ArticlesList < Noodall::Node
-      sub_templates LandindPage
+      sub_templates LandingPage
     end
 
     Page.parent_classes.should include(LandingPage)
     Page.parent_classes.should_not include(ArticlesList)
+  end
+
+  it "should know what sub templates are allowed" do
+    class LandingPage < Noodall::Node
+      root_template!
+      sub_templates Page, LandingPage
+    end
+    class Article < Noodall::Node
+    end
+
+    LandingPage.template_classes.should include(Page)
+    Article.template_classes.should have(0).things
   end
 
   it "should fall back to title for link name if it is blank" do

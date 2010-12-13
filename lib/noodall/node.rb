@@ -258,7 +258,7 @@ module Noodall
       self.name = self.title if self.name.blank?
     end
 
-    module ClassMethods
+    class << self
       @@slots = []
 
       # Set the names of the slots that will be avaiable to fill with components
@@ -304,13 +304,18 @@ module Noodall
       end
 
       def template_classes
-        return @template_classes if @template_classes
+        return root_templates if self == Noodall::Node
+        @template_classes || []
+      end
+
+      def root_templates
+        return @root_templates if @root_templates
         classes = []
         ObjectSpace.each_object(Class) do |c|
           next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node) and c.root_template?
           classes << c
         end
-        @template_classes = classes
+        @root_templates = classes
       end
 
       def template_names
@@ -353,8 +358,6 @@ module Noodall
         Time.zone ? Time.zone.now : Time.now
       end
     end
-    extend ClassMethods
-
 
   end
 
