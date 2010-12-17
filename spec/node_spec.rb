@@ -361,7 +361,7 @@ describe Noodall::Node do
     end
     
   end
-
+  
   it "should return related" do
     Factory(:page, :title => "My Page 1", :tag_list => 'one,two,three')
     Factory(:page, :title => "My Page 2", :tag_list => 'two,three,four')

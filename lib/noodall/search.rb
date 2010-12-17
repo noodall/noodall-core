@@ -50,7 +50,7 @@ module Noodall
         criteria.merge!( :_keywords => { :$in => words } )
 
         # The Search result
-        search_result = collection.map_reduce(search_map(words), search_reduce, {:query => criteria, :finalize => search_finalize})
+        search_result = collection.map_reduce(search_map(words), search_reduce, :query => criteria)
 
         # Add value to sort options because model is stored in the value key
         options[:sort].map! do |s,v|
@@ -91,7 +91,7 @@ module Noodall
       end
 
       def search_reduce
-        "function( key , values ){return { model: values[0]};}"
+        "function( key , values ){return values[0];}"
       end
 
       def search_finalize
