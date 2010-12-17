@@ -24,6 +24,10 @@ module Noodall
       def language(lang = 'en')
         @language ||= lang
       end
+      
+      def stemmer
+        @stemmer ||= Lingua::Stemmer.new(:language => language)
+      end
 
       def search(query, options = {})
         if options[:per_page] || options[:per_page]
@@ -39,7 +43,11 @@ module Noodall
         # Extract words from the query and clean up
         words = query.downcase.split(/\W/) - STOPWORDS
         words.reject!{|w| w.length < 3}
-        criteria.merge!( :_keywords => { :$all => words } )
+        
+        # add stemmed words to the array of words
+        words = stem(words) | words
+
+        criteria.merge!( :_keywords => { :$in => words } )
 
         # The Search result
         search_result = collection.map_reduce(search_map(words), search_reduce, {:query => criteria, :finalize => search_finalize})
@@ -62,6 +70,10 @@ module Noodall
         results.tap do |docs|
           docs.map! { |hash| load(hash['value']) }
         end
+      end
+      
+      def stem(words)
+        words.map { |word| stemmer.stem(word) }
       end
 
       def search_map(words)
@@ -90,22 +102,20 @@ module Noodall
     module InstanceMethods
       protected
       def _update_keywords
-        s = Lingua::Stemmer.new(:language => self.class.language)
-
         self._keywords = []
 
         self.class.searchable_keys.each do |search_key|
-          self._keywords += keywords_for_value(s, send(search_key)).compact
+          self._keywords += keywords_for_value(send(search_key)).compact
         end
       end
 
       private
-      def keywords_for_value(stemmer, val)
+      def keywords_for_value(val)
         if val.kind_of?(String)
           words = val.downcase.split(/\W/) - STOPWORDS
           words.reject!{|w| w.length < 3}
           words.map do |word|
-            stem = stemmer.stem(word)
+            stem = self.class.stemmer.stem(word)
             if stem != word
               [stem, word]
             else
