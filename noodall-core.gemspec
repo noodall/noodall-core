@@ -60,20 +60,20 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<mongo_mapper>, ["~> 0.8.6"])
       s.add_runtime_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["~> 0.1.1"])
-      s.add_runtime_dependency(%q<mm-multi-parameter-attributes>, ["0.1.0"])
+      s.add_runtime_dependency(%q<mm-multi-parameter-attributes>, ["~> 0.1.1"])
       s.add_runtime_dependency(%q<canable>, ["= 0.1.1"])
       s.add_runtime_dependency(%q<ruby-stemmer>, [">= 0"])
     else
       s.add_dependency(%q<mongo_mapper>, ["~> 0.8.6"])
       s.add_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["~> 0.1.1"])
-      s.add_dependency(%q<mm-multi-parameter-attributes>, ["0.1.0"])
+      s.add_dependency(%q<mm-multi-parameter-attributes>, ["~> 0.1.1"])
       s.add_dependency(%q<canable>, ["= 0.1.1"])
       s.add_dependency(%q<ruby-stemmer>, [">= 0"])
     end
   else
     s.add_dependency(%q<mongo_mapper>, ["~> 0.8.6"])
     s.add_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["~> 0.1.1"])
-    s.add_dependency(%q<mm-multi-parameter-attributes>, ["0.1.0"])
+    s.add_dependency(%q<mm-multi-parameter-attributes>, ["~> 0.1.1"])
     s.add_dependency(%q<canable>, ["= 0.1.1"])
     s.add_dependency(%q<ruby-stemmer>, [">= 0"])
   end
