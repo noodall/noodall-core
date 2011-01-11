@@ -281,9 +281,9 @@ describe Noodall::Node do
     john = User.create!(:name => 'John', :groups => ['Webbies','Blokes'])
     steve = User.create!(:name => 'Steve', :groups => ['Dudes'])
 
-    ruby = Factory(:page, :updatable_groups => ['Dudes'], :destroyable_groups => ['Webbies', 'Dudes'], :publishable_groups => ['Dudes'] )
+    ruby = Factory(:page, :updatable_groups => ['Dudes'], :destroyable_groups => ['Webbies', 'Dudes'], :publishable_groups => ['Dudes'], :viewable_groups => ['Blokes'] )
 
-    ruby.all_groups.should have(2).things
+    ruby.all_groups.should have(3).things
 
     john.can_create?(ruby).should == true
     steve.can_create?(ruby).should == true
@@ -292,7 +292,7 @@ describe Noodall::Node do
     ruby.save
 
     john.can_view?(ruby).should == true
-    steve.can_view?(ruby).should == true
+    steve.can_view?(ruby).should == false
 
     john.can_update?(ruby).should == false
     steve.can_update?(ruby).should == true
@@ -329,24 +329,24 @@ describe Noodall::Node do
 
     results.should have(0).things
   end
-  
+
   describe "creating keywords" do
-    
+
     it "should create keywords" do
       page = Factory(:page, :title => "I like to teach")
       page._keywords.should include("teach")
-      
+
       page = Factory(:page, :title => "I am going to be teaching")
       page._keywords.should include("teach")
-      
+
       page = Factory(:page, :title => "The way he teaches is terrible")
       page._keywords.should include("teach")
     end
-    
+
   end
-  
+
   describe "stemmed searching" do
-    
+
     before(:each) do
       Factory(:page, :title => "I like to teach")
       Factory(:page, :title => "I like teaching")
@@ -354,14 +354,14 @@ describe Noodall::Node do
       Factory(:page, :title => "I like the moon")
       Factory(:page, :title => "I like cheese")
     end
-    
+
     it "should return stemmed matches" do
       results = Page.search("teaching")
       results.should have(3).things
     end
-    
+
   end
-  
+
   it "should return related" do
     Factory(:page, :title => "My Page 1", :tag_list => 'one,two,three')
     Factory(:page, :title => "My Page 2", :tag_list => 'two,three,four')

@@ -21,6 +21,7 @@ module Noodall
     key :updatable_groups, Array
     key :destroyable_groups, Array
     key :publishable_groups, Array
+    key :viewable_groups, Array
     key :permalink, Permalink, :required => true, :index => true
 
     timestamps!
@@ -125,10 +126,10 @@ module Noodall
 
     ## CANS
     def all_groups
-      updatable_groups | destroyable_groups | publishable_groups
+      updatable_groups | destroyable_groups | publishable_groups | viewable_groups
     end
 
-    %w( updatable destroyable publishable ).each do |permission|
+    %w( updatable destroyable publishable viewable ).each do |permission|
       define_method("#{permission}_by?") do |user|
         user.admin? or send("#{permission}_groups").empty? or user.groups.any?{ |g| send("#{permission}_groups").include?(g) }
       end
