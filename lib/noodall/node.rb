@@ -160,6 +160,10 @@ module Noodall
       search_class.where(parent_id_field => self._id).order(tree_order)
     end
 
+    def in_site_map?
+      Noodall::Site.contains?(self.permalink.to_s)
+    end
+
   private
 
     def current_time

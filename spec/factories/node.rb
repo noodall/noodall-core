@@ -12,5 +12,6 @@ end
 # And a factory to build it
 Factory.define :page do |node|
   node.title { Faker::Lorem.words(3).join(' ') }
+  node.body { Faker::Lorem.paragraph }
   node.published_at { Time.now }
 end
