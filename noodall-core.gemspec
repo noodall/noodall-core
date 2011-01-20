@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{noodall-core}
-  s.version = "0.3.12"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Steve England"]
-  s.date = %q{2011-01-11}
+  s.date = %q{2011-01-20}
   s.description = %q{Core data objects for Noodall}
   s.email = %q{steve@wearebeef.co.uk}
   s.extra_rdoc_files = [
@@ -32,12 +32,14 @@ Gem::Specification.new do |s|
      "lib/noodall/node.rb",
      "lib/noodall/permalink.rb",
      "lib/noodall/search.rb",
+     "lib/noodall/site.rb",
      "lib/noodall/tagging.rb",
      "noodall-core.gemspec",
      "spec/component_spec.rb",
      "spec/factories/component.rb",
      "spec/factories/node.rb",
      "spec/node_spec.rb",
+     "spec/site_map_spec.rb",
      "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/beef/noodall-core}
@@ -47,6 +49,7 @@ Gem::Specification.new do |s|
   s.summary = %q{Core data objects for Noodall}
   s.test_files = [
     "spec/node_spec.rb",
+     "spec/site_map_spec.rb",
      "spec/component_spec.rb",
      "spec/spec_helper.rb",
      "spec/factories/node.rb",
