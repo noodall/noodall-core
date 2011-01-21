@@ -261,10 +261,10 @@ describe Noodall::Node do
   it "shold allow groups to be set by strings for easy form access" do
     node = Factory(:page)
     node.destroyable_groups_list = 'Webbies, Dudes,Things,  Dudes, ,'
-    node.destroyable_groups.should == ['Webbies', 'Dudes', 'Things']
+    node.destroyable_groups.should == ['webbies', 'dudes', 'things']
 
     node = Factory(:page, :destroyable_groups_list => 'Webbies, Dudes,Things,  Dudes, ,')
-    node.destroyable_groups.should == ['Webbies', 'Dudes', 'Things']
+    node.destroyable_groups.should == ['webbies', 'dudes', 'things']
   end
 
   it "should restrict user accces by groups" do
