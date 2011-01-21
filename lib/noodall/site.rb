@@ -5,6 +5,7 @@ module Noodall
       attr_accessor :map, :permalinks
 
       def build!
+        return false unless map.is_a?(Hash)
         map.each do |permalink, attributes|
           build_node(permalink, attributes)
         end
@@ -12,6 +13,7 @@ module Noodall
 
       def contains?(permalink)
         self.permalinks ||= []
+        return false unless map.is_a?(Hash)
         return true if map.keys.include?(permalink)
         map.values.each do |attrubutes|
           extract_permalinks(attrubutes)

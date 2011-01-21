@@ -44,4 +44,10 @@ describe Noodall::Site do
     Noodall::Site.contains?('wout').should == false
     Home.first.in_site_map?.should == true
   end
+
+  it 'should not fail if site map is empty' do
+    Noodall::Site.map = nil
+    Noodall::Site.build!
+    Noodall::Site.contains?('about').should == false
+  end
 end
