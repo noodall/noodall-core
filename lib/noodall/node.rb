@@ -34,9 +34,10 @@ module Noodall
 
     acts_as_tree :order => "position", :search_class => Noodall::Node
 
+    # if there are any children that are not of an allowed template, error
     validates_true_for :template,
       :message => "cannot be changed as sub content is not allowed in this template",
-      :logic => lambda { children.reject{|c| self._type.constantize.template_classes.include?(c.class)}.empty? }
+      :logic => lambda { children.empty? || children.select{|c| !self._type.constantize.template_classes.include?(c.class)}.empty? }
 
     scope :published, lambda { where(:published_at => { :$lte => current_time }, :published_to => { :$gte => current_time }) }
 
