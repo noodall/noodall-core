@@ -139,7 +139,7 @@ module Noodall
       end
 
       define_method("#{permission}_groups_list=") do |groups_string|
-        send("#{permission}_groups=", groups_string.split(',').map{|g| g.blank? ? nil : g.strip }.compact.uniq)
+        send("#{permission}_groups=", groups_string.downcase.split(',').map{|g| g.blank? ? nil : g.strip }.compact.uniq)
       end
     end
 
@@ -230,6 +230,7 @@ module Noodall
         self.updatable_groups  = parent.updatable_groups
         self.destroyable_groups = parent.destroyable_groups
         self.publishable_groups = parent.publishable_groups
+        self.viewable_groups = parent.viewable_groups
       end
     end
 
