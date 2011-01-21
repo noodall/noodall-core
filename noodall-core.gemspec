@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{noodall-core}
-  s.version = "0.4.1"
+  s.version = "0.4.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Steve England"]
@@ -45,19 +45,18 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/beef/noodall-core}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.4.1}
   s.summary = %q{Core data objects for Noodall}
   s.test_files = [
     "spec/node_spec.rb",
+     "spec/site_map_spec.rb",
      "spec/component_spec.rb",
      "spec/spec_helper.rb",
      "spec/factories/node.rb",
-     "spec/factories/component.rb",
-     "spec/site_map_spec.rb"
+     "spec/factories/component.rb"
   ]
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
