@@ -84,7 +84,7 @@ module Noodall
         "function(){" +
           "this.relevance = this._keywords.filter(" +
           "function(z){" +
-          "return String(z).match(/(#{q})/);" +
+          "return String(z).match(/(#{q})/ig);" +
           "}).length;" +
           "emit(this._id, this);" +
           "}"
