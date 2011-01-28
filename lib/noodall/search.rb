@@ -24,7 +24,7 @@ module Noodall
       def language(lang = 'en')
         @language ||= lang
       end
-      
+
       def stemmer
         @stemmer ||= Lingua::Stemmer.new(:language => language)
       end
@@ -43,7 +43,7 @@ module Noodall
         # Extract words from the query and clean up
         words = query.downcase.split(/\W/) - STOPWORDS
         words.reject!{|w| w.length < 3}
-        
+
         # add stemmed words to the array of words
         words = stem(words) | words
 
@@ -71,7 +71,7 @@ module Noodall
           docs.map! { |hash| load(hash['value']) }
         end
       end
-      
+
       def stem(words)
         words.map { |word| stemmer.stem(word) }
       end
@@ -84,7 +84,7 @@ module Noodall
         "function(){" +
           "this.relevance = this._keywords.filter(" +
           "function(z){" +
-          "return String(z).match(/(#{q})/ig);" +
+          "return String(z).match(/(#{q})/i);" +
           "}).length;" +
           "emit(this._id, this);" +
           "}"
