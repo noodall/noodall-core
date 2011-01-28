@@ -31,6 +31,7 @@ module Noodall
     alias_method :keywords=, :tag_list=
 
     attr_accessor :publish, :hide #for publishing
+    attr_accessor :previous_parent_id, :moved #for redordering
 
     acts_as_tree :order => "position", :search_class => Noodall::Node
 
@@ -76,31 +77,17 @@ module Noodall
     end
 
     def last?
-      position == search_class.count(:_id => {"$ne" => self._id}, parent_id_field => self[parent_id_field])
+      position == siblings.count
     end
+
     def move_lower
       sibling = search_class.first(:position => {"$gt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position ASC')
-
-      tmp = sibling.position
-      sibling.position = self.position
-      self.position = tmp
-
-      search_class.collection.update({:_id => self._id}, self.to_mongo)
-      search_class.collection.update({:_id => sibling._id}, sibling.to_mongo)
-
-      global_updated!
+      switch_position(sibling)
     end
+
     def move_higher
       sibling = search_class.first(:position => {"$lt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position DESC')
-
-      tmp = sibling.position
-      sibling.position = self.position
-      self.position = tmp
-
-      search_class.collection.update({:_id => self._id}, self.to_mongo)
-      search_class.collection.update({:_id => sibling._id}, sibling.to_mongo)
-
-      global_updated!
+      switch_position(sibling)
     end
 
     def run_callbacks(kind, options = {}, &block)
@@ -154,7 +141,6 @@ module Noodall
 
     def self_and_siblings
       search_class.where(parent_id_field => self[parent_id_field]).order(tree_order)
-
     end
 
     def children
@@ -166,6 +152,17 @@ module Noodall
     end
 
   private
+
+    def switch_position(sibling)
+      tmp = sibling.position
+      sibling.position = self.position
+      self.position = tmp
+
+      search_class.collection.update({:_id => self._id}, self.to_mongo)
+      search_class.collection.update({:_id => sibling._id}, sibling.to_mongo)
+
+      global_updated!
+    end
 
     def current_time
       self.class.current_time
@@ -235,11 +232,38 @@ module Noodall
       end
     end
 
+    before_update :move_check
+    def move_check
+      set_previous_parent if self.parent_id_changed?
+      self.moved = true if self.position_changed? or self.parent_id_changed?
+    end
+
+    before_destroy :set_previous_parent #so the child list it was removed from normalises order
+    def set_previous_parent
+      self.previous_parent_id = self.parent_id_was
+    end
+
+    before_create :set_moved #so if it is placed at the top of list it normalises order
+    def set_moved
+      self.moved = true
+    end
+
     after_save :order_siblings
     def order_siblings
-      if position_changed?
-        search_class.collection.update({:_id => {"$ne" => self._id}, :position => {"$gte" => self.position}, parent_id_field => self[parent_id_field]}, { "$inc" => { :position => 1 }}, { :multi => true })
-        self_and_siblings.each_with_index do |sibling, index|
+      search_class.collection.update({:_id => {"$ne" => self._id}, :position => {"$gte" => self.position}, parent_id_field => self[parent_id_field]}, { "$inc" => { :position => 1 }}, { :multi => true }) if moved
+      self_and_siblings.each_with_index do |sibling, index|
+        unless sibling.position == index
+          sibling.position = index
+          search_class.collection.save(sibling.to_mongo, :safe => true)
+        end
+      end
+      order_previous_siblings
+    end
+
+    after_destroy :order_previous_siblings
+    def order_previous_siblings
+      unless previous_parent_id.nil?
+        search_class.where(parent_id_field => previous_parent_id).each_with_index do |sibling, index|
           unless sibling.position == index
             sibling.position = index
             search_class.collection.save(sibling.to_mongo, :safe => true)
