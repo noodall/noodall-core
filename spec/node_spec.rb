@@ -410,4 +410,16 @@ describe Noodall::Node do
     page.name.should == "Shorty"
   end
 
+  it "should be indexed only when explicitly called" do
+    Noodall::Node.collection.drop_indexes
+    class LandingPage < Noodall::Node
+      key :dude, String, :index => true
+    end
+
+    Noodall::Node.indexes.should include ['dude']
+
+    Noodall::Node.create_indexes!
+    Noodall::Node.collection.index_information.keys.should include('dude_1')
+  end
+
 end

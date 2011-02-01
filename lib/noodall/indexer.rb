@@ -1,9 +1,22 @@
 module Noodall
   module Indexer
+    def self.configure(model)
+      model.class_eval do
+        puts "index on"
+        cattr_accessor :indexes
+      end
+      model.indexes = []
+    end
     module ClassMethods
-      def ensure_index(spec, options={})
-        #collection.create_index(spec, options)
-        # TODO: something clever here as runtime indexing is bad
+      def ensure_index(*args)
+        indexes << args
+      end
+
+      def create_indexes!
+        indexes.each do |args|
+          puts "Creating index #{args.inspect}"
+          collection.create_index(*args)
+        end
       end
     end
   end

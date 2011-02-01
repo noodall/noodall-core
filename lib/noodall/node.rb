@@ -14,10 +14,10 @@ module Noodall
     key :name, String
     key :description, String
     key :body, String
-    key :position, Integer, :default => nil
+    key :position, Integer, :default => nil, :index => true
     key :_type, String
-    key :published_at, Time
-    key :published_to, Time
+    key :published_at, Time, :index => true
+    key :published_to, Time, :index => true
     key :updatable_groups, Array
     key :destroyable_groups, Array
     key :publishable_groups, Array
