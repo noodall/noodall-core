@@ -2,7 +2,6 @@ module Noodall
   module Indexer
     def self.configure(model)
       model.class_eval do
-        puts "index on"
         cattr_accessor :indexes
       end
       model.indexes = []
