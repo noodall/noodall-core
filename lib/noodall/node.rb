@@ -151,6 +151,11 @@ module Noodall
       Noodall::Site.contains?(self.permalink.to_s)
     end
 
+    # A slug for creating the permalink
+    def slug
+      (self.name.blank? ? self.title : self.name).to_s.parameterize
+    end
+
   private
 
     def switch_position(sibling)
@@ -175,8 +180,7 @@ module Noodall
         # this code takes name over title for the current node's slug
         # this way enables children to inherit the parent's custom (user defined) permalink also
         permalink_args = self.parent.nil? ? [] : self.parent.permalink.dup
-        self_slug = (self.name.blank? ? self.title : self.name).to_s.parameterize
-        permalink_args << self_slug unless self_slug.blank?
+        permalink_args << self.slug unless self.slug.blank?
         self.permalink = Permalink.new(*permalink_args)
       end
     end
