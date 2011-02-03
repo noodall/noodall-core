@@ -38,7 +38,7 @@ module Noodall
     # if there are any children that are not of an allowed template, error
     validates_true_for :template,
       :message => "cannot be changed as sub content is not allowed in this template",
-      :logic => lambda { children.empty? || children.select{|c| !self._type.constantize.template_classes.include?(c.class)}.empty? }
+      :logic => lambda { !_type_changed? or children.empty? or children.select{|c| !self._type.constantize.template_classes.include?(c.class)}.empty? }
 
     scope :published, lambda { where(:published_at => { :$lte => current_time }, :published_to => { :$gte => current_time }) }
 
@@ -214,7 +214,6 @@ module Noodall
 
           index = key[/#{slot_type}_slot_(\d+)$/, 1].to_i
 
-          logger.debug "Deleting #{key} #{self.send(key).inspect}" if index >= slot_count
           # set the slot to nil
           write_attribute(key.to_sym, nil) if index >= slot_count
         end

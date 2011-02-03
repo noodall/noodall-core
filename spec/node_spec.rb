@@ -422,4 +422,31 @@ describe Noodall::Node do
     Noodall::Node.collection.index_information.keys.should include('dude_1')
   end
 
+  describe "when template changing" do
+
+    before(:each) do
+      class LandingPage < Noodall::Node
+        root_template!
+        sub_templates Page, LandingPage
+      end
+      class Article < Noodall::Node
+      end
+      @page = Factory(:page)
+      Factory(:page, :parent => @page) # add a child
+    end
+
+    it "should not error if we haven't changed template" do
+      @page.save!
+    end
+
+    it "should throw an validation error if the children are not valid" do
+      @page.template = 'Article'
+      @page.save.should be(false)
+    end
+
+    it "should allow us to change template" do
+      @page.template = 'Landing Page'
+      @page.save!
+    end
+  end
 end
