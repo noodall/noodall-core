@@ -24,6 +24,12 @@ describe Noodall::Node do
     Noodall::Node.template_classes.should include(LandingPage)
   end
 
+  it "should filter roots with options" do
+    page = Factory(:landing_page, :title => "My Landing Page", :publish => true)
+    page = Factory(:page, :title => "My Page", :publish => true)
+    Noodall::Node.roots({:_type => ['Page']}).count.should == 1
+  end
+
   it "should know what class it is" do
     page = Page.create!(@valid_attributes)
     page.reload
