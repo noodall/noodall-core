@@ -112,7 +112,7 @@ module Noodall
       private
       def keywords_for_value(val)
         if val.kind_of?(String)
-          words = val.downcase.split(/\W/) - STOPWORDS
+          words = val.gsub(/<\/?[^>]*>/, "").downcase.split(/\W/) - STOPWORDS
           words.reject!{|w| w.length < 3}
           words.map do |word|
             stem = self.class.stemmer.stem(word)
