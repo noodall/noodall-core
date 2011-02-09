@@ -328,8 +328,7 @@ module Noodall
       end
 
       def roots(options = {})
-        options.reverse_merge!({parent_id_field => nil})
-        self.where(options).order(tree_order)
+        self.where(options.reverse_merge({parent_id_field => nil})).order(tree_order)
       end
 
       def find_by_permalink(permalink)
