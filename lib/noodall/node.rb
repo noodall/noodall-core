@@ -23,6 +23,7 @@ module Noodall
     key :publishable_groups, Array
     key :viewable_groups, Array
     key :permalink, Permalink, :required => true, :index => true
+    key :admin_title, String
 
     timestamps!
     userstamps!
@@ -155,8 +156,17 @@ module Noodall
     def slug
       (self.name.blank? ? self.title : self.name).to_s.parameterize
     end
+    
+    def admin_title
+      title
+    end
 
   private
+
+    before_save :set_admin_title
+    def set_admin_title
+      self.admin_title = admin_title
+    end
 
     def switch_position(sibling)
       tmp = sibling.position
