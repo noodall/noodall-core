@@ -266,7 +266,7 @@ module Noodall
     after_destroy :order_previous_siblings
     def order_previous_siblings
       unless previous_parent_id.nil?
-        search_class.where(parent_id_field => previous_parent_id).each_with_index do |sibling, index|
+        search_class.where(parent_id_field => previous_parent_id).order(tree_order).each_with_index do |sibling, index|
           unless sibling.position == index
             sibling.position = index
             search_class.collection.save(sibling.to_mongo, :safe => true)
