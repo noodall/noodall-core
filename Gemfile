@@ -14,6 +14,6 @@ group :development do
   gem "factory_girl", "~> 1.3.2"
   gem "faker", "~> 0.3.1"
   gem "rake"
-  gem 'bson_ext', '~> 1.1.0'
+  gem 'bson_ext', '~> 1.3.0'
 end
 
