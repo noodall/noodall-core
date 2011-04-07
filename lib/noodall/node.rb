@@ -39,7 +39,7 @@ module Noodall
     # if there are any children that are not of an allowed template, error
     validates_true_for :template,
       :message => "cannot be changed as sub content is not allowed in this template",
-      :logic => lambda { !_type_changed? or children.empty? or children.select{|c| !self._type.constantize.template_classes.include?(c.class)}.empty? }
+      :logic => lambda { |args| !_type_changed? or children.empty? or children.select{|c| !self._type.constantize.template_classes.include?(c.class)}.empty? }
 
     scope :published, lambda { where(:published_at => { :$lte => current_time }, :published_to => { :$gte => current_time }) }
 
@@ -156,7 +156,7 @@ module Noodall
     def slug
       (self.name.blank? ? self.title : self.name).to_s.parameterize
     end
-    
+
     def admin_title
       title
     end
@@ -321,7 +321,7 @@ module Noodall
             instance_variable_set("@#{slot}_slots_count", count)
             count.times do |i|
               key "#{slot}_slot_#{i}", Noodall::Component
-              validates_each "#{slot}_slot_#{i}", :logic => lambda { errors.add("#{slot}_slot_#{i}", "is not allowed in a #{slot} slot") unless send("#{slot}_slot_#{i}").nil? or Noodall::Component.positions_classes(slot).include?(send("#{slot}_slot_#{i}").class) } # TODO: Nicer message please
+              validates_each "#{slot}_slot_#{i}", :logic => lambda { |args| errors.add("#{slot}_slot_#{i}", "is not allowed in a #{slot} slot") unless send("#{slot}_slot_#{i}").nil? or Noodall::Component.positions_classes(slot).include?(send("#{slot}_slot_#{i}").class) } # TODO: Nicer message please
               validates_associated "#{slot}_slot_#{i}"
             end
           end
