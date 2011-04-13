@@ -11,9 +11,9 @@ begin
     gem.email = "steve@wearebeef.co.uk"
     gem.homepage = "http://github.com/beef/noodall-core"
     gem.authors = ["Steve England"]
-    gem.add_dependency('mongo_mapper', '~> 0.8.6')
+    gem.add_dependency('mongo_mapper', '~> 0.9.0')
     gem.add_dependency('ramdiv-mongo_mapper_acts_as_tree', '~> 0.1.1')
-    gem.add_dependency('mm-multi-parameter-attributes', '~> 0.1.1')
+    gem.add_dependency('mm-multi-parameter-attributes', '~> 0.2.1')
     gem.add_dependency('canable', '0.1.1')
     gem.add_dependency('ruby-stemmer')
 

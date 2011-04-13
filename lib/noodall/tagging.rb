@@ -1,11 +1,11 @@
 module Noodall
   module Tagging
-    def self.configure(model)
-      model.class_eval do
-        key :tags, Array, :index => true
-      end
+    extend ActiveSupport::Concern
+
+    included do
+      key :tags, Array, :index => true
     end
-  
+
     module ClassMethods
       def tag_cloud(options = {})
         return [] if self.count == 0 # Don't bother if there is nothing in this collection
@@ -21,7 +21,7 @@ module Noodall
           []
         end
       end
-  
+
       def tag_cloud_map
        "function(){" +
         "this.tags.forEach(" +
@@ -30,7 +30,7 @@ module Noodall
         "}" +
         ")}"
       end
-  
+
       def tag_cloud_reduce
         "function( key , values ){" +
         "var total = 0;" +
@@ -41,24 +41,24 @@ module Noodall
         "}"
       end
     end
-  
+
     module InstanceMethods
       def tag_list=(string)
         self.tags = string.to_s.split(',').map{ |t| t.strip.downcase }.reject(&:blank?).compact.uniq
       end
-  
+
       def tag_list
         tags.join(', ')
       end
-  
+
       def related(options ={})
         self.class.all(options.merge({:_id => {'$ne' => self._id}, :tags => /(#{self.tags.join('|')})/i}))
       end
     end
-  
+
     class Tag
       attr_reader :name, :count
-  
+
       def initialize(name, count)
         @name = name
         @count = count.to_i

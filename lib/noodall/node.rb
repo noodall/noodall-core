@@ -37,9 +37,7 @@ module Noodall
     acts_as_tree :order => "position", :search_class => Noodall::Node
 
     # if there are any children that are not of an allowed template, error
-    validates_true_for :template,
-      :message => "cannot be changed as sub content is not allowed in this template",
-      :logic => lambda { |args| !_type_changed? or children.empty? or children.select{|c| !self._type.constantize.template_classes.include?(c.class)}.empty? }
+    validate :child_templates_allowed
 
     scope :published, lambda { where(:published_at => { :$lte => current_time }, :published_to => { :$gte => current_time }) }
 
@@ -91,17 +89,17 @@ module Noodall
       switch_position(sibling)
     end
 
-    def run_callbacks(kind, options = {}, &block)
-      self.class.send("#{kind}_callback_chain").run(self, options, &block)
-      self.embedded_associations.each do |association|
-        self.send(association.name).each do |document|
-          document.run_callbacks(kind, options, &block)
-        end
-      end
-      self.embedded_keys.each do |key|
-        self.send(key.name).run_callbacks(kind, options, &block) unless self.send(key.name).nil?
-      end
-    end
+    #def run_callbacks(kind, options = {}, &block)
+      #self.class.send("#{kind}_callback_chain").run(self, options, &block)
+      #self.embedded_associations.each do |association|
+        #self.send(association.name).each do |document|
+          #document.run_callbacks(kind, options, &block)
+        #end
+      #end
+      #self.embedded_keys.each do |key|
+        #self.send(key.name).run_callbacks(kind, options, &block) unless self.send(key.name).nil?
+      #end
+    #end
 
     def slots
       slots = []
@@ -302,6 +300,13 @@ module Noodall
       self.name = self.title if self.name.blank?
     end
 
+    # Validate that child templates (set via sub_templates) are allowed if the template is changed
+    def child_templates_allowed
+      unless !_type_changed? or children.empty?
+        errors.add(:base, "Template cannot be changed as sub content is not allowed in this template") unless children.select{|c| !self._type.constantize.template_classes.include?(c.class)}.empty?
+      end
+    end
+
     class << self
       @@slots = []
 
@@ -320,9 +325,10 @@ module Noodall
           define_singleton_method("#{slot}_slots") do |count|
             instance_variable_set("@#{slot}_slots_count", count)
             count.times do |i|
-              key "#{slot}_slot_#{i}", Noodall::Component
-              validates_each "#{slot}_slot_#{i}", :logic => lambda { |args| errors.add("#{slot}_slot_#{i}", "is not allowed in a #{slot} slot") unless send("#{slot}_slot_#{i}").nil? or Noodall::Component.positions_classes(slot).include?(send("#{slot}_slot_#{i}").class) } # TODO: Nicer message please
-              validates_associated "#{slot}_slot_#{i}"
+              slot_sym = "#{slot}_slot_#{i}".to_sym
+              key slot_sym, Noodall::Component
+              validates slot_sym, :slot => { :slot_type => slot }
+              validates_associated slot_sym
             end
           end
           define_singleton_method("#{slot}_slots_count") { instance_variable_get("@#{slot}_slots_count") }
@@ -400,6 +406,12 @@ module Noodall
       # If rails style time zones are unavaiable fallback to standard now
       def current_time
         Time.zone ? Time.zone.now : Time.now
+      end
+    end
+
+    class SlotValidator < ActiveModel::EachValidator
+      def validate_each(record, attribute, value)
+        record.errors[attribute] << "cannnot contain  #{value.class.name.humanize}" unless value.nil? or Noodall::Component.positions_classes(options[:slot_type]).include?(value.class)
       end
     end
 
