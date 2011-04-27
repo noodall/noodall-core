@@ -28,6 +28,8 @@ module Noodall
     timestamps!
     userstamps!
 
+    enable_versioning
+
     alias_method :keywords, :tag_list
     alias_method :keywords=, :tag_list=
 
