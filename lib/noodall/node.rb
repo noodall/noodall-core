@@ -66,7 +66,7 @@ module Noodall
     end
 
     def has_draft?
-      version_at(:latest).pos != version_number
+      !version_at(:latest).nil? && version_at(:latest).pos != version_number
     end
 
     def pending?
