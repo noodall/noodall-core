@@ -4,7 +4,7 @@ gem 'mongo_mapper', '~> 0.9.0'
 gem 'ramdiv-mongo_mapper_acts_as_tree', '~> 0.1.1'
 gem 'mm-multi-parameter-attributes', '~> 0.2.0'
 gem 'canable', '~> 0.1.1'
-gem 'mm-versionable'
+gem 'mm-versionable', :git => 'git://github.com/stengland/mm-versionable.git'
 gem 'ruby-stemmer'
 gem 'i18n'
 

@@ -455,4 +455,13 @@ describe Noodall::Node do
       @page.save!
     end
   end
+
+  it "should know if newer (draft) versions are avaiable" do
+      @page = Factory(:page)
+      @page.has_draft?.should be(false)
+      @page.title = "Some title"
+      @page.save_version
+      @page.reload
+      @page.has_draft?.should == true
+  end
 end

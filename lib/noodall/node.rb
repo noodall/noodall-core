@@ -65,6 +65,10 @@ module Noodall
       !published_at.nil? and published_at <= current_time and (published_to.nil? or published_to >= current_time)
     end
 
+    def has_draft?
+      version_at(:latest).pos != version_number
+    end
+
     def pending?
       published_at.nil? or published_at >= current_time
     end
