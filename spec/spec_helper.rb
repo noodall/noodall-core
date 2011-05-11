@@ -11,7 +11,7 @@ MongoMapper.database = 'noodal-core-test'
 
 DatabaseCleaner.strategy = :truncation
 DatabaseCleaner.clean_with(:truncation)
- 
+
 
 Noodall::Node.slots :main, :wide, :small
 
@@ -20,7 +20,7 @@ require 'factories/component'
 
 Rspec.configure do |config|
   config.mock_with :rspec
-  
+
   config.before(:each) do
     DatabaseCleaner.start
   end
@@ -28,5 +28,5 @@ Rspec.configure do |config|
   config.after(:each) do
     DatabaseCleaner.clean
   end
-  
+
 end

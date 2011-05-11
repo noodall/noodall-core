@@ -381,6 +381,15 @@ describe Noodall::Node do
     ref.related.should have(2).things
   end
 
+  it "should have a tag cloud" do
+    Factory(:page, :title => "My Page 1", :tag_list => 'one,two,three')
+    Factory(:page, :title => "My Page 2", :tag_list => 'two,three,four')
+    Factory(:page, :title => "My Page 3", :tag_list => 'three,four,five')
+
+    tags =  Page.tag_cloud
+    tags.length.should == 5
+  end
+
   it "should know who can be a parent" do
     class LandingPage < Noodall::Node
       sub_templates Page
