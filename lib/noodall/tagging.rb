@@ -12,10 +12,9 @@ module Noodall
         query = query(options.reverse_merge(
           :order => 'value DESC'
         ))
-        tags_map = collection.map_reduce(tag_cloud_map, tag_cloud_reduce, {:query => query.criteria.to_hash})
+        tags_map = collection.map_reduce(tag_cloud_map, tag_cloud_reduce, {:query => query.criteria.to_hash, :out => "#{self.collection_name}_tags" })
         if tags_map.count > 0
           tags = tags_map.find({}, query.options.to_hash ).to_a.collect{ |hash| Tag.new(hash['_id'], hash['value']) }
-          tags_map.drop # clean up tmp collection
           tags
         else
           []
