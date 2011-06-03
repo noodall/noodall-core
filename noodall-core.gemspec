@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{noodall-core}
-  s.version = "0.6.2"
+  s.version = "0.6.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Steve England"]
-  s.date = %q{2011-05-11}
+  s.date = %q{2011-06-03}
   s.description = %q{Core data objects for Noodall}
   s.email = %q{steve@wearebeef.co.uk}
   s.extra_rdoc_files = [
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     ".rvmrc",
      "Gemfile",
      "LICENSE",
      "README.rdoc",
@@ -44,15 +45,15 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/beef/noodall-core}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.4.1}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{Core data objects for Noodall}
   s.test_files = [
-    "spec/node_spec.rb",
-     "spec/site_map_spec.rb",
-     "spec/component_spec.rb",
-     "spec/spec_helper.rb",
+    "spec/component_spec.rb",
+     "spec/factories/component.rb",
      "spec/factories/node.rb",
-     "spec/factories/component.rb"
+     "spec/node_spec.rb",
+     "spec/site_map_spec.rb",
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
