@@ -41,7 +41,7 @@ module Noodall
         options = plucky_query.options.to_hash
 
         # Extract words from the query and clean up
-        words = query.downcase.split(/\W/) - STOPWORDS
+        words = query.to_s.downcase.split(/\W/) - STOPWORDS
         words.reject!{|w| w.length < 3}
 
         # add stemmed words to the array of words
