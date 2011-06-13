@@ -15,7 +15,7 @@ begin
     gem.add_dependency('ramdiv-mongo_mapper_acts_as_tree', '~> 0.1.1')
     gem.add_dependency('mm-multi-parameter-attributes', '~> 0.2.1')
     gem.add_dependency('canable', '0.1.1')
-    gem.add_dependency('mm-versionable', '0.2.2')
+    gem.add_dependency('mm-versionable', '0.2.3')
     gem.add_dependency('ruby-stemmer')
 
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
