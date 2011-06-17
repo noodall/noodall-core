@@ -1,16 +1,17 @@
 module Noodall
   module Search
+    extend ActiveSupport::Concern
+
     STOPWORDS = ["all","also","and","any","are","been","but","can", "cannot", "cant","else","etc","for","from","get", "give","had","has","hasnt","have","inc","into","its","not","put","see","this","too","via","was","were","when","with"]
 
-    def self.configure(model)
+
+    included do
       require 'lingua/stemmer'
 
-      model.class_eval do
-        key :_keywords, Array, :index => true
-        attr_accessor :relevance
+      key :_keywords, Array, :index => true
+      attr_accessor :relevance
 
-        before_save :_update_keywords
-      end
+      before_save :_update_keywords
     end
 
     module ClassMethods
