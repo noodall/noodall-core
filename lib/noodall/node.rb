@@ -11,6 +11,7 @@ module Noodall
     plugin Noodall::GlobalUpdateTime
 
     key :title, String, :required => true
+    key :browser_title, String
     key :name, String
     key :description, String
     key :body, String
