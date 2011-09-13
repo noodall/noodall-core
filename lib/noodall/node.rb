@@ -163,7 +163,7 @@ module Noodall
     end
 
     def admin_title
-      title
+      name
     end
 
   private

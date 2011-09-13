@@ -415,14 +415,23 @@ describe Noodall::Node do
   end
 
   it "should fall back to title for link name if it is blank" do
-    page = Factory(:page, :title => "My Long Title that is long")
+    title = "My Long Title that is long"
+    name = "Shorty"
+    page = Factory(:page, :title => title)
 
-    page.name.should == "My Long Title that is long"
+    page.name.should == title
 
-    page.name = "Shorty"
+    page.name = name
     page.save
 
-    page.name.should == "Shorty"
+    page.name.should == name
+  end
+
+  it "Should have an admin_title that matches the name" do
+    title = "My title"
+    name = "Somthing else"
+    page = Factory(:page, :title => title, :name => name)
+    page.admin_title.should == name
   end
 
   it "should be indexed only when explicitly called" do
