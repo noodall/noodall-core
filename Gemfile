@@ -9,6 +9,5 @@ group :development do
   gem "faker", "~> 0.3.1"
   gem "rake"
   gem 'bson_ext', '~> 1.3.0'
-  gem 'SystemTimer', '~> 1.2.0'
 end
 
