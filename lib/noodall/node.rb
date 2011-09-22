@@ -14,7 +14,7 @@ module Noodall
     key :browser_title, String
     key :name, String
     key :description, String
-    key :body, String
+    key :body, String, :default => ""
     key :position, Integer, :default => nil, :index => true
     key :_type, String
     key :published_at, Time, :index => true
@@ -163,7 +163,7 @@ module Noodall
     end
 
     def admin_title
-      title
+      name
     end
 
   private
