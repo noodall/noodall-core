@@ -86,12 +86,21 @@ describe Noodall::Node do
     c.valid?.should == false
   end
 
-  it "should know it's root templates" do
-    class LandingPage < Noodall::Node
+  it "should know it's root templates (deprecated)" do
+    class DRootPage < Noodall::Node
       root_template!
     end
 
-    Noodall::Node.template_classes.should include(LandingPage)
+    Noodall::Node.template_classes.should include(DRootPage)
+  end
+
+  it "should allow you to set the root templates" do
+    class RootPage < Noodall::Node
+    end
+
+    Noodall::Node.root_templates RootPage
+
+    Noodall::Node.template_classes.should include(RootPage)
   end
 
   it "should filter roots with options" do
@@ -111,7 +120,6 @@ describe Noodall::Node do
     node.class.should == Page
 
     class LandingPage < Noodall::Node
-      root_template!
     end
 
     LandingPage.create!(@valid_attributes)
@@ -128,8 +136,9 @@ describe Noodall::Node do
   describe "within a tree" do
     before(:each) do
       class LandingPage < Noodall::Node
-        root_template!
       end
+
+      Noodall::Node.root_templates LandingPage
 
       @root = LandingPage.create!(:title => "Root")
 
@@ -442,13 +451,14 @@ describe Noodall::Node do
       sub_templates LandingPage
     end
 
+    Noodall::Node.root_templates LandingPage, ArticlesList
+
     Page.parent_classes.should include(LandingPage)
     Page.parent_classes.should_not include(ArticlesList)
   end
 
   it "should know what sub templates are allowed" do
     class LandingPage < Noodall::Node
-      root_template!
       sub_templates Page, LandingPage
     end
     class Article < Noodall::Node
@@ -485,7 +495,6 @@ describe Noodall::Node do
 
     before(:each) do
       class LandingPage < Noodall::Node
-        root_template!
         sub_templates Page, LandingPage
       end
       class Article < Noodall::Node

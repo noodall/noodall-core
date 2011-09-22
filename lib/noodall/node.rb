@@ -401,49 +401,60 @@ module Noodall
         @template_classes || []
       end
 
-      def root_templates
-        return @root_templates if @root_templates
-        classes = []
-        ObjectSpace.each_object(Class) do |c|
-          next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node) and c.root_template?
-          classes << c
-        end
-        @root_templates = classes
-      end
-
       def template_names
-        template_classes.collect{|c| c.name.titleize}.sort
+        template_classes.map{|c| c.name.titleize }.sort
       end
 
+      # Returns a lst of all node template classes available in
+      # in the tree
       def all_template_classes
         templates = []
-        template_classes.each do |template|
+        root_templates.each do |template|
           templates << template
           templates = templates + template.template_classes
         end
-        templates.uniq.collect{ |c| c.name.titleize }.sort
+        templates.uniq
       end
 
+      def all_template_names
+        all_template_classes.map{|c| c.name.titleize }.sort
+      end
+
+      # Set the Node templates that can be a child  of this templates
+      # in the tree
       def sub_templates(*arr)
         @template_classes = arr
       end
 
+      @@root_templates = []
+
+      # Set the Node templates that can be a root of a tree
+      #
+      # Noodall::Node.root_templates Home, LandingPage
+      #
+      # Returns a list of the root templates
+      #
+      # Noodall::Node.root_templates # => [Home, LandingPage]
+      def root_templates(*templates)
+        @@root_templates = templates unless templates.empty?
+        @@root_templates
+      end
+
+      # <b>DEPRECATED:</b> Please use <tt>root_templates/tt> instead.
       def root_template!
-        @root_template = true
+        warn "[DEPRECATION] `root_template` is deprecated.  Please use `root_templates` instead."
+        @@root_templates << self
       end
 
       def root_template?
-        @root_template
+        @@root_templates.include?(self)
       end
 
       # Returns a list of classes that can have this model as a child
       def parent_classes
-        classes = []
-        ObjectSpace.each_object(Class) do |c|
-          next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node) and c.template_classes.include?(self)
-          classes << c
+        all_template_classes.find_all do |c|
+          c.template_classes.include?(self)
         end
-        classes
       end
 
       # If rails style time zones are unavaiable fallback to standard now
