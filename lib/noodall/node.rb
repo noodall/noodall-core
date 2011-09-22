@@ -316,6 +316,8 @@ module Noodall
     class << self
       @@slots = []
 
+      # <b>DEPRECATED:</b> Please use <tt>slot</tt> instead.
+      #
       # Set the names of the slots that will be avaiable to fill with components
       # For each name new methods will be created;
       #
@@ -324,21 +326,56 @@ module Noodall
       #   <name>_slots_count(count)
       #   Reads back the count you set
       def slots(*args)
-        @@slots = args.map(&:to_sym).uniq
+        warn "[DEPRECATION] `slots` is deprecated.  Please use `slot` instead."
+        slots = args.map(&:to_sym).uniq
 
-        @@slots.each do |slot|
-          puts "Noodall::Node Defined slot: #{slot}"
-          define_singleton_method("#{slot}_slots") do |count|
-            instance_variable_set("@#{slot}_slots_count", count)
+        slots.each do |s|
+          slot(s)
+        end
+      end
+
+      # Define a slot type and what components are allowed to be place in that
+      # slot type.
+      #
+      # Generates methods in Noodall::Node models that allow you to set and read the
+      # number of slots of the name defined
+      #
+      #   Noodall::Node.slot :small, Gallery, Picture
+      #
+      #   class NicePage < Noodall::Node
+      #     small_slots 3
+      #   end
+      #
+      #   NicePage.small_slots_count  # => 3
+      #
+      #   n = NicePage.new
+      #   n.small_slot_0 = Gallery.new(...)
+      #
+      def slot(slot_name, *allowed_components)
+        if @@slots.include?(slot_name.to_sym)
+          warn "[WARNING] Overriding slot definition"
+        else
+          @@slots << slot_name.to_sym
+          puts "Noodall::Node Defined slot: #{slot_name}"
+          define_singleton_method("#{slot_name}_slots") do |count|
+            instance_variable_set("@#{slot_name}_slots_count", count)
             count.times do |i|
-              slot_sym = "#{slot}_slot_#{i}".to_sym
+              slot_sym = "#{slot_name}_slot_#{i}".to_sym
               key slot_sym, Noodall::Component
-              validates slot_sym, :slot => { :slot_type => slot }
+              validates slot_sym, :slot => { :slot_type => slot_name }
               validates_associated slot_sym
             end
           end
-          define_singleton_method("#{slot}_slots_count") { instance_variable_get("@#{slot}_slots_count") }
+
+          define_singleton_method("#{slot_name}_slot_components") do
+            class_variable_get "@@#{slot_name}_slot_components".to_sym
+          end
+
+          define_singleton_method("#{slot_name}_slots_count") do
+            instance_variable_get("@#{slot_name}_slots_count")
+          end
         end
+        class_variable_set "@@#{slot_name}_slot_components".to_sym, allowed_components
       end
 
       def slots_count
@@ -417,7 +454,7 @@ module Noodall
 
     class SlotValidator < ActiveModel::EachValidator
       def validate_each(record, attribute, value)
-        record.errors[attribute] << "cannnot contain  #{value.class.name.humanize}" unless value.nil? or Noodall::Component.positions_classes(options[:slot_type]).include?(value.class)
+        record.errors[attribute] << "cannnot contain a #{value.class.name.humanize} component" unless value.nil? or Noodall::Component.positions_classes(options[:slot_type]).include?(value.class)
       end
     end
 

@@ -2,46 +2,74 @@ require 'spec_helper'
 
 describe Noodall::Component do
 
-  it "should allow you to define the slots that are available" do
-    Noodall::Node.slots :wide, :small, :main
-
-    Noodall::Component.possible_slots.should == [:wide, :small, :main]
-
-    class Promo < Noodall::Component
-      allowed_positions :small, :wide, :main, :egg, :nog
+  it "should list components classes avaiable to a slot (deprecated)" do
+    class DListedComponent < Noodall::Component
+      allowed_positions :small, :wide
     end
 
-    Promo.positions.should have(3).things
+    Noodall::Node.small_slot_components.should include(DListedComponent)
+    Noodall::Node.main_slot_components.should_not include(DListedComponent)
   end
 
   it "should list components classes avaiable to a slot" do
+    class ListedComponent < Noodall::Component
+    end
 
-    class Promo < Noodall::Component
+    Noodall::Node.slot :small, ListedComponent, Content
+    Noodall::Node.slot :main, Content
+
+    Noodall::Node.small_slot_components.should include(ListedComponent)
+    Noodall::Node.main_slot_components.should_not include(ListedComponent)
+  end
+
+  it "should be validated by the node (deprecated)" do
+    Noodall::Node.slots :wide, :small, :main
+
+    class DValidatedComponent < Noodall::Component
       allowed_positions :small, :wide
     end
 
-    Promo.positions.should have(2).things
+    class DValidatedNode < Noodall::Node
+      main_slots 3
+    end
 
-    Noodall::Component.positions_classes(:small).should include(Promo)
-    Noodall::Component.positions_classes(:main).should_not include(Promo)
+    node = DValidatedNode.new :title => "Slot Node"
+    node.main_slot_0 = DValidatedComponent.new
+
+    node.save
+
+    node.errors.should have(1).things
   end
 
   it "should be validated by the node" do
-    class Promo < Noodall::Component
-      allowed_positions :small, :wide
+    class ValidatedComponent < Noodall::Component
     end
 
-    node = Factory(:page)
-    node.main_slot_0 = Promo.new()
-  
+    Noodall::Node.slot :middle, ValidatedComponent
+    Noodall::Node.slot :main, Content
+
+    class ValidatedNode < Noodall::Node
+      main_slots 1
+    end
+
+    node = ValidatedNode.new :title => "Slot Node"
+    node.main_slot_0 = ValidatedComponent.new
+
     node.save
-  
+
     node.errors.should have(1).things
   end
 
   it "should know it's node" do
-    node = Factory(:page)
-    node.small_slot_0 = Factory(:content) 
+    Noodall::Node.slot :small, Content
+
+    class KnowingNode < Noodall::Node
+      small_slots 3
+    end
+
+    node = KnowingNode.new :title => "Slot Node"
+
+    node.small_slot_0 = Factory(:content)
 
     node.save!
 

@@ -3,8 +3,6 @@ class Content < Noodall::Component
   key :title, String
   key :url, String
   key :url_text, String
-
-  allowed_positions :small, :wide
 end
 
 # And a factory to build it
