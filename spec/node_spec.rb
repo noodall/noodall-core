@@ -7,6 +7,76 @@ describe Noodall::Node do
     }
   end
 
+  it "should allow me to set up slots (deprecated)" do
+    Noodall::Node.slots :dmain, :dsmall
+    class DSlotNode < Noodall::Node
+      dsmall_slots 3
+      dmain_slots 3
+    end
+
+    DSlotNode.new.slots.should be_instance_of(Array)
+    DSlotNode.slots_count.should == 6
+  end
+
+  it "should allow me to set up slots" do
+    Noodall::Node.slot :main, Content
+    Noodall::Node.slot :small, Content
+
+    class SlotNode < Noodall::Node
+      small_slots 3
+      main_slots 3
+    end
+
+    SlotNode.new.slots.should be_instance_of(Array)
+    SlotNode.small_slot_components.should include(Content)
+    SlotNode.slots_count.should == 6
+  end
+
+  it "should be able to list all slots (deprecated)" do
+    Noodall::Node.slots :dsmall
+
+    class DListSlotNode < Noodall::Node
+      dsmall_slots 3
+    end
+
+    class DListSlotComponent < Noodall::Component
+      allowed_positions :dsmall
+    end
+
+    node = DListSlotNode.new(:title => "Slot Node")
+    node.dsmall_slot_0 = DListSlotComponent.new(:body => "Some text")
+    node.dsmall_slot_1 = DListSlotComponent.new(:body => "Some more text")
+
+    node.save!
+
+    node.slots.should have(2).things
+
+    node.slots.first.body.should == "Some text"
+    node.slots.last.body.should == "Some more text"
+  end
+
+  it "should be able to list all slots" do
+    class ListSlotComponent < Noodall::Component
+    end
+
+    Noodall::Node.slot :small, ListSlotComponent
+
+    class ListSlotNode < Noodall::Node
+      small_slots 3
+    end
+
+    node = ListSlotNode.new(:title => "Slot Node")
+    node.small_slot_0 = ListSlotComponent.new(:body => "Some text")
+    node.small_slot_1 = ListSlotComponent.new(:body => "Some more text")
+
+    node.save!
+
+    node.slots.should have(2).things
+
+    node.slots.first.body.should == "Some text"
+    node.slots.last.body.should == "Some more text"
+  end
+
   it "should create a new instance given valid attributes" do
     Noodall::Node.create!(@valid_attributes)
   end
@@ -16,12 +86,21 @@ describe Noodall::Node do
     c.valid?.should == false
   end
 
-  it "should know it's root templates" do
-    class LandingPage < Noodall::Node
+  it "should know it's root templates (deprecated)" do
+    class DRootPage < Noodall::Node
       root_template!
     end
 
-    Noodall::Node.template_classes.should include(LandingPage)
+    Noodall::Node.template_classes.should include(DRootPage)
+  end
+
+  it "should allow you to set the root templates" do
+    class RootPage < Noodall::Node
+    end
+
+    Noodall::Node.root_templates RootPage
+
+    Noodall::Node.template_classes.should include(RootPage)
   end
 
   it "should filter roots with options" do
@@ -41,7 +120,6 @@ describe Noodall::Node do
     node.class.should == Page
 
     class LandingPage < Noodall::Node
-      root_template!
     end
 
     LandingPage.create!(@valid_attributes)
@@ -55,20 +133,12 @@ describe Noodall::Node do
     Noodall::Node.find_by_permalink('my-page').should == page
   end
 
-  it "should allow you to set the number of slots" do
-    class NicePage < Noodall::Node
-      wide_slots 3
-      small_slots 5
-    end
-
-    NicePage.slots_count.should == 8
-  end
-
   describe "within a tree" do
     before(:each) do
       class LandingPage < Noodall::Node
-        root_template!
       end
+
+      Noodall::Node.root_templates LandingPage
 
       @root = LandingPage.create!(:title => "Root")
 
@@ -194,23 +264,6 @@ describe Noodall::Node do
     p = Factory(:page)
   end
 
-  it "should be able to list all slots" do
-    ObjectSpace.each_object(Class) do |c|
-      next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node)
-      c.new.slots.should be_instance_of(Array)
-    end
-
-    node = Factory(:page)
-    node.small_slot_0 = Content.new(:body => "Some text")
-    node.small_slot_1 = Content.new(:body => "Some more text")
-
-    node.save!
-
-    node.slots.should have(2).things
-
-    node.slots.first.body.should == "Some text"
-    node.slots.last.body.should == "Some more text"
-  end
 
   it "should use a tree structure" do
     root = Page.create!(@valid_attributes)
@@ -398,13 +451,14 @@ describe Noodall::Node do
       sub_templates LandingPage
     end
 
+    Noodall::Node.root_templates LandingPage, ArticlesList
+
     Page.parent_classes.should include(LandingPage)
     Page.parent_classes.should_not include(ArticlesList)
   end
 
   it "should know what sub templates are allowed" do
     class LandingPage < Noodall::Node
-      root_template!
       sub_templates Page, LandingPage
     end
     class Article < Noodall::Node
@@ -450,7 +504,6 @@ describe Noodall::Node do
 
     before(:each) do
       class LandingPage < Noodall::Node
-        root_template!
         sub_templates Page, LandingPage
       end
       class Article < Noodall::Node

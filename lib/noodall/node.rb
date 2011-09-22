@@ -317,6 +317,8 @@ module Noodall
     class << self
       @@slots = []
 
+      # <b>DEPRECATED:</b> Please use <tt>slot</tt> instead.
+      #
       # Set the names of the slots that will be avaiable to fill with components
       # For each name new methods will be created;
       #
@@ -325,21 +327,56 @@ module Noodall
       #   <name>_slots_count(count)
       #   Reads back the count you set
       def slots(*args)
-        @@slots = args.map(&:to_sym).uniq
+        warn "[DEPRECATION] `slots` is deprecated.  Please use `slot` instead."
+        slots = args.map(&:to_sym).uniq
 
-        @@slots.each do |slot|
-          puts "Noodall::Node Defined slot: #{slot}"
-          define_singleton_method("#{slot}_slots") do |count|
-            instance_variable_set("@#{slot}_slots_count", count)
+        slots.each do |s|
+          slot(s)
+        end
+      end
+
+      # Define a slot type and what components are allowed to be place in that
+      # slot type.
+      #
+      # Generates methods in Noodall::Node models that allow you to set and read the
+      # number of slots of the name defined
+      #
+      #   Noodall::Node.slot :small, Gallery, Picture
+      #
+      #   class NicePage < Noodall::Node
+      #     small_slots 3
+      #   end
+      #
+      #   NicePage.small_slots_count  # => 3
+      #
+      #   n = NicePage.new
+      #   n.small_slot_0 = Gallery.new(...)
+      #
+      def slot(slot_name, *allowed_components)
+        if @@slots.include?(slot_name.to_sym)
+          warn "[WARNING] Overriding slot definition"
+        else
+          @@slots << slot_name.to_sym
+          puts "Noodall::Node Defined slot: #{slot_name}"
+          define_singleton_method("#{slot_name}_slots") do |count|
+            instance_variable_set("@#{slot_name}_slots_count", count)
             count.times do |i|
-              slot_sym = "#{slot}_slot_#{i}".to_sym
+              slot_sym = "#{slot_name}_slot_#{i}".to_sym
               key slot_sym, Noodall::Component
-              validates slot_sym, :slot => { :slot_type => slot }
+              validates slot_sym, :slot => { :slot_type => slot_name }
               validates_associated slot_sym
             end
           end
-          define_singleton_method("#{slot}_slots_count") { instance_variable_get("@#{slot}_slots_count") }
+
+          define_singleton_method("#{slot_name}_slot_components") do
+            class_variable_get "@@#{slot_name}_slot_components".to_sym
+          end
+
+          define_singleton_method("#{slot_name}_slots_count") do
+            instance_variable_get("@#{slot_name}_slots_count")
+          end
         end
+        class_variable_set "@@#{slot_name}_slot_components".to_sym, allowed_components
       end
 
       def slots_count
@@ -365,49 +402,60 @@ module Noodall
         @template_classes || []
       end
 
-      def root_templates
-        return @root_templates if @root_templates
-        classes = []
-        ObjectSpace.each_object(Class) do |c|
-          next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node) and c.root_template?
-          classes << c
-        end
-        @root_templates = classes
-      end
-
       def template_names
-        template_classes.collect{|c| c.name.titleize}.sort
+        template_classes.map{|c| c.name.titleize }.sort
       end
 
+      # Returns a lst of all node template classes available in
+      # in the tree
       def all_template_classes
         templates = []
-        template_classes.each do |template|
+        root_templates.each do |template|
           templates << template
           templates = templates + template.template_classes
         end
-        templates.uniq.collect{ |c| c.name.titleize }.sort
+        templates.uniq
       end
 
+      def all_template_names
+        all_template_classes.map{|c| c.name.titleize }.sort
+      end
+
+      # Set the Node templates that can be a child  of this templates
+      # in the tree
       def sub_templates(*arr)
         @template_classes = arr
       end
 
+      @@root_templates = []
+
+      # Set the Node templates that can be a root of a tree
+      #
+      # Noodall::Node.root_templates Home, LandingPage
+      #
+      # Returns a list of the root templates
+      #
+      # Noodall::Node.root_templates # => [Home, LandingPage]
+      def root_templates(*templates)
+        @@root_templates = templates unless templates.empty?
+        @@root_templates
+      end
+
+      # <b>DEPRECATED:</b> Please use <tt>root_templates/tt> instead.
       def root_template!
-        @root_template = true
+        warn "[DEPRECATION] `root_template` is deprecated.  Please use `root_templates` instead."
+        @@root_templates << self
       end
 
       def root_template?
-        @root_template
+        @@root_templates.include?(self)
       end
 
       # Returns a list of classes that can have this model as a child
       def parent_classes
-        classes = []
-        ObjectSpace.each_object(Class) do |c|
-          next unless c.ancestors.include?(Noodall::Node) and (c != Noodall::Node) and c.template_classes.include?(self)
-          classes << c
+        all_template_classes.find_all do |c|
+          c.template_classes.include?(self)
         end
-        classes
       end
 
       # If rails style time zones are unavaiable fallback to standard now
@@ -418,7 +466,7 @@ module Noodall
 
     class SlotValidator < ActiveModel::EachValidator
       def validate_each(record, attribute, value)
-        record.errors[attribute] << "cannnot contain  #{value.class.name.humanize}" unless value.nil? or Noodall::Component.positions_classes(options[:slot_type]).include?(value.class)
+        record.errors[attribute] << "cannnot contain a #{value.class.name.humanize} component" unless value.nil? or Noodall::Component.positions_classes(options[:slot_type]).include?(value.class)
       end
     end
 
