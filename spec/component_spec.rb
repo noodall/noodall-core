@@ -4,11 +4,11 @@ describe Noodall::Component do
 
   it "should list components classes avaiable to a slot (deprecated)" do
     class DListedComponent < Noodall::Component
-      allowed_positions :small, :wide
+      allowed_positions :dsmall, :dwide
     end
 
-    Noodall::Node.small_slot_components.should include(DListedComponent)
-    Noodall::Node.main_slot_components.should_not include(DListedComponent)
+    Noodall::Node.dsmall_slot_components.should include(DListedComponent)
+    Noodall::Node.dmain_slot_components.should_not include(DListedComponent)
   end
 
   it "should list components classes avaiable to a slot" do
