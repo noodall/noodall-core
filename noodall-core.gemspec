@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
   s.add_dependency(%q<mongo_mapper>, ["~> 0.9.0"])
   s.add_dependency(%q<ramdiv-mongo_mapper_acts_as_tree>, ["~> 0.1.1"])
   s.add_dependency(%q<mm-multi-parameter-attributes>, ["~> 0.2.1"])
-  s.add_dependency(%q<canable>, ["= 0.1.1"])
-  s.add_dependency(%q<mm-versionable>, ["= 0.2.5"])
+  s.add_dependency(%q<canable>, ["~> 0.1.1"])
+  s.add_dependency(%q<mm-versionable>, ["~> 0.2.5"])
   s.add_dependency(%q<ruby-stemmer>, [">= 0"])
 
   s.files        = `git ls-files`.split("\n")
