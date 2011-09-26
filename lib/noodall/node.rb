@@ -466,7 +466,9 @@ module Noodall
 
     class SlotValidator < ActiveModel::EachValidator
       def validate_each(record, attribute, value)
-        record.errors[attribute] << "cannnot contain a #{value.class.name.humanize} component" unless value.nil? or Noodall::Component.positions_classes(options[:slot_type]).include?(value.class)
+        unless value.nil? or Noodall::Component.positions_classes(options[:slot_type]).one?{|c| c.name == value._type }
+          record.errors[attribute] << "cannnot contain a #{value.class.name.humanize} component"
+        end
       end
     end
 
