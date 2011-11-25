@@ -45,7 +45,7 @@ module Noodall
       end
 
       def create_node(klass_name, attributes)
-        if defined?(Factory) && Factory.factories[klass_name.underscore.to_sym]
+        if defined?(Factory) && FactoryGirl.factories[klass_name.underscore.to_sym]
           Factory(klass_name.underscore, attributes)
         else
           klass_name.constantize.create!(attributes)
