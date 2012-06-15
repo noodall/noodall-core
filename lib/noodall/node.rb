@@ -54,6 +54,9 @@ module Noodall
       var == "none" ? super(nil) : super
     end
 
+    # The template name of the Node
+    #
+    # Returns the template name String
     def template
       self.class.name.titleize
     end
@@ -317,15 +320,17 @@ module Noodall
     class << self
       @@slots = []
 
-      # <b>DEPRECATED:</b> Please use <tt>slot</tt> instead.
+      # Deprecated: Sets the slots for the Node.
+      # Set the names of the slots that will be available to fill with components.
+      # For each name new methods will be created.
       #
-      # Set the names of the slots that will be avaiable to fill with components
-      # For each name new methods will be created;
+      # Examples
       #
-      #   <name>_slots(count)
-      #   This allow you to set the number of slots available in a template
-      #   <name>_slots_count(count)
-      #   Reads back the count you set
+      #   Noodall::Node.slots :hero, :large, :small
+      #   Noodall::Node.possible_slots
+      #   # => [:hero, :large, :small]
+      #
+      # Returns nothing.
       def slots(*args)
         warn "[DEPRECATION] `slots` is deprecated.  Please use `slot` instead."
         slots = args.map(&:to_sym).uniq
@@ -352,6 +357,7 @@ module Noodall
       #   n = NicePage.new
       #   n.small_slot_0 = Gallery.new(...)
       #
+      # Returns nothing
       def slot(slot_name, *allowed_components)
         if @@slots.include?(slot_name.to_sym)
           warn "[WARNING] Overriding slot definition"
@@ -379,35 +385,87 @@ module Noodall
         class_variable_set "@@#{slot_name}_slot_components".to_sym, allowed_components
       end
 
+      # The number of slots available to a Node
+      #
+      # Examples
+      #
+      #   ContentPage.slots_count
+      #   # => 8
+      #
+      # Returns the number of slots
       def slots_count
         @@slots.inject(0) { |total, slot| total + send("#{slot}_slots_count").to_i }
       end
 
+      # All possible slots
+      #
+      # Examples
+      #
+      #   Noodall::Node.slot :large, GeneralContent
+      #   Noodall::Node.slot :small, GeneralContent
+      #   Noodall::Node.slot :carousel, Carousel
+      #
+      #   Noodall::Node.possible_slots
+      #   # => [:large, :small, :carousel]
+      #
+      # Returns an Array of Symbols
       def possible_slots
         @@slots
       end
 
+      # Collection of all top-level Nodes (those without parent_id)
+      #
+      # Returns a Plucky::Query containing all top level Nodes
       def roots(options = {})
         self.where(options.reverse_merge({parent_id_field => nil})).order(tree_order)
       end
 
+      # Finds a Node by its permalink attribute
+      #
+      # permalink - The String permalink name to find
+      #
+      # Examples
+      #
+      #   Noodall::Node.find_by_permalink('some-page-permalink')
+      #
+      # Returns the found Node
       def find_by_permalink(permalink)
         node = find_one(:permalink => permalink.to_s, :published_at => { :$lte => current_time })
         raise MongoMapper::DocumentNotFound if node.nil? or node.expired?
         node
       end
 
+      # Templates classes available for use with the current Node
+      #
+      # Examples
+      #
+      #   Noodall::Node.template_classes
+      #   # => [ContactPage, ContentPage, LandingPage]
+      #
+      #   ContentPage.template_classes
+      #   # => [ContentPage, PageA, PageB]
+      #
+      # Returns an Array of template constants
       def template_classes
         return root_templates if self == Noodall::Node
         @template_classes || []
       end
 
+      # Templates available for use with nodes
+      #
+      # Examples
+      #
+      #   Noodall::Node.template_names
+      #   # => ["Contact Page", "Content Page", "Landing Page"]
+      #
+      # Returns an Array of template names
       def template_names
         template_classes.map{|c| c.name.titleize }.sort
       end
 
-      # Returns a lst of all node template classes available in
-      # in the tree
+      # All Node template classes available in the tree (all Node templates)
+      #
+      # Returns an Array of template class constants
       def all_template_classes
         templates = []
         root_templates.each do |template|
@@ -417,6 +475,9 @@ module Noodall
         templates.uniq
       end
 
+      # All Node templates available in the tree (all Node templates)
+      #
+      # Returns an Array of template names
       def all_template_names
         all_template_classes.map{|c| c.name.titleize }.sort
       end
@@ -431,22 +492,34 @@ module Noodall
 
       # Set the Node templates that can be a root of a tree
       #
-      # Noodall::Node.root_templates Home, LandingPage
+      # Examples
       #
-      # Returns a list of the root templates
+      #   Noodall::Node.root_templates Home, LandingPage
+      #   Noodall::Node.root_templates
+      #   # => [Home, LandingPage]
       #
-      # Noodall::Node.root_templates # => [Home, LandingPage]
+      # Returns an Array of the root templates
       def root_templates(*templates)
         @@root_templates = templates unless templates.empty?
         @@root_templates
       end
 
-      # <b>DEPRECATED:</b> Please use <tt>root_templates/tt> instead.
+      # Deprecated: Please use root_templates instead
+      #
+      # Returns nothing
       def root_template!
         warn "[DEPRECATION] `root_template` is deprecated.  Please use `root_templates` instead."
         @@root_templates << self
       end
 
+      # Whether the Node is a root template or not (not a sub-template)
+      #
+      # Examples
+      #
+      #   ContentPage.root_template?
+      #   # => true
+      #
+      # Return true or false
       def root_template?
         @@root_templates.include?(self)
       end
