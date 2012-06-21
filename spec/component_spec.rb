@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Noodall::Component do
 
   it "should list components classes avaiable to a slot (deprecated)" do
+    Noodall::Node.slots :dwide, :dsmall, :dmain
+
     class DListedComponent < Noodall::Component
       allowed_positions :dsmall, :dwide
     end
