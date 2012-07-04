@@ -34,8 +34,11 @@ module Noodall
     alias_method :keywords, :tag_list
     alias_method :keywords=, :tag_list=
 
-    attr_accessor :publish, :hide #for publishing
-    attr_accessor :previous_parent_id, :moved #for redordering
+    # For publishing
+    attr_accessor :publish, :hide
+
+    # For re-dordering
+    attr_accessor :previous_parent_id, :moved
 
     acts_as_tree :order => "position", :search_class => Noodall::Node
 
@@ -44,11 +47,19 @@ module Noodall
 
     scope :published, lambda { where(:published_at => { :$lte => current_time }, :published_to => { :$gte => current_time }) }
 
+    # Published child Nodes of the current Node
+    #
+    # Returns Array containing all published child Nodes
     def published_children
       self.children.select{|c| c.published? }
     end
 
-    # Allow parent to be set to none using a string. Allows us to set the parent to nil easily via forms
+    # Set the Node's parent. Set to "none" to have no parent.
+    #
+    # parent - The String to set as parent or "none"
+    #
+    # Allow parent to be set to none using a string.
+    # Allows us to set the parent to nil easily via forms
     def parent=(var)
       self[parent_id_field] = nil
       var == "none" ? super(nil) : super
@@ -56,44 +67,80 @@ module Noodall
 
     # The template name of the Node
     #
-    # Returns the template name String
+    # Returns String the template name
     def template
       self.class.name.titleize
     end
 
+    # Set the Node's template
+    #
+    # Examples
+    #
+    #   node = Noodall::Node.find_by_permalink('some-page-permalink')
+    #   node.template = "Landing Page"
+    #   node.template
+    #   # => "Landing Page"
+    #
+    # Returns String the new template name
     def template=(template_name)
       self._type = template_name.gsub(' ','') unless template_name.blank?
     end
 
+    # Whether this Node is published
     def published?
       !published_at.nil? and published_at <= current_time and (published_to.nil? or published_to >= current_time)
     end
 
+    # Whether this Node has a draft
     def has_draft?
       !version_at(:latest).nil? && version_at(:latest).pos != version_number
     end
 
+    # Whether this Node is pending publication
     def pending?
       published_at.nil? or published_at >= current_time
     end
 
+    # Whether this Node has expired
     def expired?
       !published_to.nil? and published_to <= current_time
     end
 
+    # Whether this is the first Node in the tree
     def first?
       position == 0
     end
 
+    # Whether this is the last Node in the tree
     def last?
       position == siblings.count
     end
 
+    # Moves the Node one position lower in the tree
+    #
+    # Examples
+    #
+    #   node = Noodall::Node.find_by_permalink('some-page-permalink')
+    #   node.position
+    #   # => 3
+    #   node.move_lower
+    #   node.position
+    #   # => 4
     def move_lower
       sibling = search_class.first(:position => {"$gt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position ASC')
       switch_position(sibling)
     end
 
+    # Moves the Node one position higher in the tree
+    #
+    # Examples
+    #
+    #   node = Noodall::Node.find_by_permalink('some-page-permalink')
+    #   node.position
+    #   # => 3
+    #   node.move_higher
+    #   node.position
+    #   # => 2
     def move_higher
       sibling = search_class.first(:position => {"$lt" => self.position}, parent_id_field => self[parent_id_field], :order => 'position DESC')
       switch_position(sibling)
@@ -111,6 +158,9 @@ module Noodall
       #end
     #end
 
+    # The content of all slots
+    #
+    # Returns Array of Noodall::Component objects
     def slots
       slots = []
       for slot_type in self.class.possible_slots.map(&:to_s)
@@ -121,7 +171,9 @@ module Noodall
       slots.compact
     end
 
-    ## CANS
+    # All groups the Node belongs to
+    #
+    # Returns Array of groups
     def all_groups
       updatable_groups | destroyable_groups | publishable_groups | viewable_groups
     end
@@ -140,31 +192,50 @@ module Noodall
       end
     end
 
+    # Whether the supplied user can create the Node
+    #
+    # user - The User object to check against
     def creatable_by?(user)
       parent.nil? or parent.updatable_by?(user)
     end
 
+    # Sibling Nodes of the current Node
+    #
+    # Returns Plucky::Query containing all siblings Nodes
     def siblings
       search_class.where(:_id => {:$ne => self._id}, parent_id_field => self[parent_id_field]).order(tree_order)
     end
 
+    # Sibling Nodes of the current Node including self
+    #
+    # Returns Plucky::Query containing all sibling Nodes *and* the current Node
     def self_and_siblings
       search_class.where(parent_id_field => self[parent_id_field]).order(tree_order)
     end
 
+    # Child Nodes of the current Node
+    #
+    # Returns Plucky::Query containing all child Nodes
     def children
       search_class.where(parent_id_field => self._id).order(tree_order)
     end
 
+    # Whether the current page is specified in the Sitemap
     def in_site_map?
       Noodall::Site.contains?(self.permalink.to_s)
     end
 
     # A slug for creating the permalink
+    #
+    # Returns String containing the slug
     def slug
       (self.name.blank? ? self.title : self.name).to_s.parameterize
     end
 
+    # Title which appears in the Noodall Administration (Noodall UI).
+    # This should be overridden as needed in subclasses.
+    #
+    # Returns String containing the title
     def admin_title
       name
     end
@@ -531,7 +602,10 @@ module Noodall
         end
       end
 
-      # If rails style time zones are unavaiable fallback to standard now
+      # Current time
+      #
+      # Returns ActiveSupport::TimeWithZone or Time
+      # If Rails style time zones are unavailable fallback to standard now
       def current_time
         Time.zone ? Time.zone.now : Time.now
       end
