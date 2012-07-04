@@ -1,14 +1,14 @@
-= Noodall CMS Framework
+# Noodall CMS Framework
 
 Noodall is a CMS using MongoDB. It is nice.
 
-== Getting Started
+## Getting Started
 
 See the wiki for instructions:
 https://github.com/noodall/noodall/wiki/Quick-Start
 
-== Note on Patches/Pull Requests
- 
+## Note on Patches/Pull Requests
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Add tests for it. This is important so I don't break it in a
@@ -17,6 +17,6 @@ https://github.com/noodall/noodall/wiki/Quick-Start
   (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-== Copyright
+## Copyright
 
 Copyright (c) 2012 Steve England. See LICENSE for details.
