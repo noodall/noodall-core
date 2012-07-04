@@ -463,7 +463,7 @@ module Noodall
       #   ContentPage.slots_count
       #   # => 8
       #
-      # Returns the number of slots
+      # Returns Fixnum the number of slots
       def slots_count
         @@slots.inject(0) { |total, slot| total + send("#{slot}_slots_count").to_i }
       end
@@ -479,14 +479,14 @@ module Noodall
       #   Noodall::Node.possible_slots
       #   # => [:large, :small, :carousel]
       #
-      # Returns an Array of Symbols
+      # Returns Array of Symbols
       def possible_slots
         @@slots
       end
 
       # Collection of all top-level Nodes (those without parent_id)
       #
-      # Returns a Plucky::Query containing all top level Nodes
+      # Returns Plucky::Query containing all top level Nodes
       def roots(options = {})
         self.where(options.reverse_merge({parent_id_field => nil})).order(tree_order)
       end
@@ -499,7 +499,7 @@ module Noodall
       #
       #   Noodall::Node.find_by_permalink('some-page-permalink')
       #
-      # Returns the found Node
+      # Returns Noodall::Node node which was found
       def find_by_permalink(permalink)
         node = find_one(:permalink => permalink.to_s, :published_at => { :$lte => current_time })
         raise MongoMapper::DocumentNotFound if node.nil? or node.expired?
@@ -516,7 +516,7 @@ module Noodall
       #   ContentPage.template_classes
       #   # => [ContentPage, PageA, PageB]
       #
-      # Returns an Array of template constants
+      # Returns Array of template constants
       def template_classes
         return root_templates if self == Noodall::Node
         @template_classes || []
@@ -529,14 +529,14 @@ module Noodall
       #   Noodall::Node.template_names
       #   # => ["Contact Page", "Content Page", "Landing Page"]
       #
-      # Returns an Array of template names
+      # Returns Array of template names
       def template_names
         template_classes.map{|c| c.name.titleize }.sort
       end
 
       # All Node template classes available in the tree (all Node templates)
       #
-      # Returns an Array of template class constants
+      # Returns Array of template class constants
       def all_template_classes
         templates = []
         root_templates.each do |template|
@@ -548,7 +548,7 @@ module Noodall
 
       # All Node templates available in the tree (all Node templates)
       #
-      # Returns an Array of template names
+      # Returns Array of template names
       def all_template_names
         all_template_classes.map{|c| c.name.titleize }.sort
       end
@@ -569,7 +569,7 @@ module Noodall
       #   Noodall::Node.root_templates
       #   # => [Home, LandingPage]
       #
-      # Returns an Array of the root templates
+      # Returns Array of the root templates
       def root_templates(*templates)
         @@root_templates = templates unless templates.empty?
         @@root_templates
@@ -589,13 +589,11 @@ module Noodall
       #
       #   ContentPage.root_template?
       #   # => true
-      #
-      # Return true or false
       def root_template?
         @@root_templates.include?(self)
       end
 
-      # Returns a list of classes that can have this model as a child
+      # Returns a list of classes that can have this Node as a child
       def parent_classes
         all_template_classes.find_all do |c|
           c.template_classes.include?(self)
