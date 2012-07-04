@@ -4,6 +4,7 @@ module Noodall
 
       attr_accessor :map, :permalinks
 
+      # Builds all Nodes from the sitemap.yml
       def build!
         return false unless map.is_a?(Hash)
         map.each do |permalink, attributes|
