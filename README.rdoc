@@ -1,6 +1,11 @@
-= noodall (Node-All) core
+= Noodall CMS Framework
 
-Noodal is a CMS using Mongo(mapper/id). It is nice.
+Noodall is a CMS using MongoDB. It is nice.
+
+== Getting Started
+
+See the wiki for instructions:
+https://github.com/noodall/noodall/wiki/Quick-Start
 
 == Note on Patches/Pull Requests
  
@@ -14,4 +19,4 @@ Noodal is a CMS using Mongo(mapper/id). It is nice.
 
 == Copyright
 
-Copyright (c) 2010 Steve England. See LICENSE for details.
+Copyright (c) 2012 Steve England. See LICENSE for details.
