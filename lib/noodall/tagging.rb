@@ -14,7 +14,11 @@ module Noodall
         ))
         tags_map = collection.map_reduce(tag_cloud_map, tag_cloud_reduce, {:query => query.criteria.to_hash, :out => "#{self.collection_name}_tags" })
         if tags_map.count > 0
-          tags = tags_map.find({}, query.options.to_hash ).to_a.collect{ |hash| Tag.new(hash['_id'], hash['value']) }
+          # Strange scoping issue means tags needs to be defined outside of the find block
+          tags = nil
+          tags_map.find({}, query.options.merge(:timeout => false).to_hash) do |cursor|
+            tags = cursor.map { |hash| Tag.new(hash['_id'], hash['value']) }
+          end
           tags
         else
           []
