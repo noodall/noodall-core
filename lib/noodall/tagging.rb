@@ -3,7 +3,7 @@ module Noodall
     extend ActiveSupport::Concern
 
     included do
-      key :tags, Array, :index => true
+      key :tags, Array
     end
 
     module ClassMethods
@@ -45,18 +45,16 @@ module Noodall
       end
     end
 
-    module InstanceMethods
-      def tag_list=(string)
-        self.tags = string.to_s.split(',').map{ |t| t.strip.downcase }.reject(&:blank?).compact.uniq
-      end
+    def tag_list=(string)
+      self.tags = string.to_s.split(',').map{ |t| t.strip.downcase }.reject(&:blank?).compact.uniq
+    end
 
-      def tag_list
-        tags.join(', ')
-      end
+    def tag_list
+      tags.join(', ')
+    end
 
-      def related(options ={})
-        self.class.all(options.merge({:_id => {'$ne' => self._id}, :tags => /(#{self.tags.join('|')})/i}))
-      end
+    def related(options ={})
+      self.class.all(options.merge({:_id => {'$ne' => self._id}, :tags => /(#{self.tags.join('|')})/i}))
     end
 
     class Tag

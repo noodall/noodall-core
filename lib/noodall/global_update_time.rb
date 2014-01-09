@@ -17,11 +17,9 @@ module Noodall
       after_destroy :global_updated!
     end
 
-    module InstanceMethods
-      # Cache the updated time
-      def global_updated!
-        GlobalUpdateTime::Stamp.update!
-      end
+    # Cache the updated time
+    def global_updated!
+      GlobalUpdateTime::Stamp.update!
     end
   end
 end

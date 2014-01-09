@@ -15,15 +15,15 @@ module Noodall
     key :name, String
     key :description, String
     key :body, String, :default => ""
-    key :position, Integer, :default => nil, :index => true
+    key :position, Integer, :default => nil
     key :_type, String
-    key :published_at, Time, :index => true
-    key :published_to, Time, :index => true
+    key :published_at, Time
+    key :published_to, Time
     key :updatable_groups, Array
     key :destroyable_groups, Array
     key :publishable_groups, Array
     key :viewable_groups, Array
-    key :permalink, Permalink, :required => true, :index => true
+    key :permalink, Permalink, :required => true
     key :admin_title, String
 
     timestamps!

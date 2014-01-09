@@ -8,7 +8,7 @@ module Noodall
     included do
       require 'lingua/stemmer'
 
-      key :_keywords, Array, :index => true
+      key :_keywords, Array
       attr_accessor :relevance
 
       before_save :_update_keywords
@@ -98,34 +98,33 @@ module Noodall
       end
     end
 
-    module InstanceMethods
-      protected
-      def _update_keywords
-        self._keywords = []
+  protected
 
-        self.class.searchable_keys.each do |search_key|
-          self._keywords += keywords_for_value(send(search_key)).compact
-        end
+    def _update_keywords
+      self._keywords = []
+
+      self.class.searchable_keys.each do |search_key|
+        self._keywords += keywords_for_value(send(search_key)).compact
       end
+    end
 
-      private
-      def keywords_for_value(val)
-        if val.kind_of?(String)
-          words = val.gsub(/<\/?[^>]*>/, "").downcase.split(/\W/) - STOPWORDS
-          words.reject!{|w| w.length < 3}
-          words.map do |word|
-            stem = self.class.stemmer.stem(word)
-            if stem != word
-              [stem, word]
-            else
-              word
-            end
-          end.flatten
-        elsif val.kind_of?(Array)
-          val.map { |e| keywords_for_value(stemmer, e) }.flatten
-        else
-          [val]
-        end
+    private
+    def keywords_for_value(val)
+      if val.kind_of?(String)
+        words = val.gsub(/<\/?[^>]*>/, "").downcase.split(/\W/) - STOPWORDS
+        words.reject!{|w| w.length < 3}
+        words.map do |word|
+          stem = self.class.stemmer.stem(word)
+          if stem != word
+            [stem, word]
+          else
+            word
+          end
+        end.flatten
+      elsif val.kind_of?(Array)
+        val.map { |e| keywords_for_value(stemmer, e) }.flatten
+      else
+        [val]
       end
     end
   end
